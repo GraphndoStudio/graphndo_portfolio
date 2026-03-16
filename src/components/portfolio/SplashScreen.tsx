@@ -27,7 +27,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
     <motion.div
       initial={{ opacity: 1 }}
       exit={{ opacity: 0, scale: 1.1 }}
-      transition={{ duration: 1, ease: "expo.inOut" }}
+      transition={{ duration: 1, ease: "easeInOut" }}
       className="fixed inset-0 z-[9999] bg-[#030305] flex flex-col items-center justify-center p-6"
     >
       <div className="relative w-full max-w-md text-center">

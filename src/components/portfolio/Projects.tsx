@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -159,7 +160,7 @@ export default function Projects() {
       <div className="container mx-auto px-6 mt-24 flex items-center gap-6">
         <div className="h-[3px] flex-1 bg-white/5 rounded-full overflow-hidden shadow-inner">
           <div 
-            className="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-1000 ease-expo shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+            className="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-1000 ease-in-out shadow-[0_0_10px_rgba(59,130,246,0.5)]"
             style={{ width: `${((currentIndex + 1) / PROJECTS.length) * 100}%` }}
           />
         </div>
