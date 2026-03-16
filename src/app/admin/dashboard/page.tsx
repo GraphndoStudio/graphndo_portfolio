@@ -1,11 +1,10 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   LayoutDashboard, 
-  FileText, 
   Settings, 
   LogOut, 
   Save, 
@@ -24,7 +23,9 @@ import {
   Globe,
   Share2,
   Eye,
-  EyeOff
+  EyeOff,
+  Upload,
+  X
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -46,7 +47,7 @@ const TABS = [
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("hero");
   
-  // Local state for visibility toggles (Prototype only)
+  // Local state for visibility toggles
   const [visibility, setVisibility] = useState({
     hero: true,
     about: true,
@@ -60,9 +61,77 @@ export default function AdminDashboard() {
     contact: true
   });
 
+  // Local state for image previews
+  const [previews, setPreviews] = useState<Record<string, string>>({
+    hero: "https://picsum.photos/seed/cyber1/1920/1080",
+    profile: "https://picsum.photos/seed/sharukh/600/600",
+  });
+
+  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+
+  const handleFileChange = (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setPreviews(prev => ({ ...prev, [id]: url }));
+    }
+  };
+
+  const triggerUpload = (id: string) => {
+    fileInputRefs.current[id]?.click();
+  };
+
   const toggleVisibility = (section: keyof typeof visibility) => {
     setVisibility(prev => ({ ...prev, [section]: !prev[section] }));
   };
+
+  const ImageControl = ({ id, label, currentUrl }: { id: string, label: string, currentUrl: string }) => (
+    <div className="space-y-3">
+      <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">{label}</label>
+      <div className="flex flex-col md:flex-row gap-6 items-start">
+        <div className="w-32 aspect-video md:aspect-square rounded-2xl bg-white/5 flex items-center justify-center shrink-0 border border-white/10 overflow-hidden relative group">
+          <img src={previews[id] || currentUrl} alt="Preview" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+             <button onClick={() => triggerUpload(id)} className="p-2 bg-primary rounded-full text-white shadow-lg">
+                <Upload size={14} />
+             </button>
+          </div>
+        </div>
+        <div className="flex-1 w-full space-y-3">
+          <div className="relative group">
+            <LinkIcon size={12} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" />
+            <Input 
+              value={previews[id] || currentUrl} 
+              onChange={(e) => setPreviews(prev => ({ ...prev, [id]: e.target.value }))}
+              className="bg-white/5 border-white/10 h-12 pl-10 pr-5 rounded-xl text-xs font-mono" 
+              placeholder="Source URL"
+            />
+          </div>
+          <div className="flex gap-2">
+            <button 
+              onClick={() => triggerUpload(id)}
+              className="flex-1 h-10 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all"
+            >
+              <Upload size={12} /> Local Upload
+            </button>
+            <button 
+              onClick={() => setPreviews(prev => ({ ...prev, [id]: "" }))}
+              className="px-4 h-10 bg-red-400/5 hover:bg-red-400/10 border border-red-400/20 text-red-400 rounded-xl flex items-center justify-center transition-all"
+            >
+              <X size={14} />
+            </button>
+          </div>
+          <input 
+            type="file" 
+            className="hidden" 
+            ref={el => { fileInputRefs.current[id] = el; }} 
+            onChange={(e) => handleFileChange(id, e)}
+            accept="image/*"
+          />
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-[#030305] text-white flex selection:bg-primary/30 antialiased font-body">
@@ -150,7 +219,7 @@ export default function AdminDashboard() {
             transition={{ duration: 0.3 }}
             className="max-w-4xl"
           >
-            {/* Section Visibility Header Toggle (Added for quick access) */}
+            {/* Visibility Toggle */}
             {activeTab !== "settings" && (
               <div className="mb-8 flex items-center justify-between p-6 glass-card border-primary/20 bg-primary/5">
                 <div className="flex items-center gap-4">
@@ -187,13 +256,10 @@ export default function AdminDashboard() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">Tagline Roles (Separated by Bullet)</label>
+                  <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">Tagline Roles</label>
                   <Input defaultValue="Creative Developer • UI Architect" className="bg-white/5 border-white/10 h-12 px-5 rounded-xl focus:border-primary/50" />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">Hero Backdrop Reference (URL)</label>
-                  <Input defaultValue="https://picsum.photos/seed/cyber1/1920/1080" className="bg-white/5 border-white/10 h-12 px-5 rounded-xl focus:border-primary/50" />
-                </div>
+                <ImageControl id="hero" label="Hero Backdrop Node" currentUrl="https://picsum.photos/seed/cyber1/1920/1080" />
               </div>
             )}
 
@@ -203,18 +269,10 @@ export default function AdminDashboard() {
                   <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">Narrative Headline</label>
                   <Input defaultValue="Clean Code Meets Emotional Design." className="bg-white/5 border-white/10 h-14 px-6 rounded-xl focus:border-primary/50 text-xl font-bold tracking-tight" />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">Identity Artifact (Profile Image)</label>
-                  <div className="flex gap-6 items-center">
-                    <div className="w-20 h-20 rounded-2xl bg-white/5 flex items-center justify-center shrink-0 border border-white/10 overflow-hidden">
-                      <img src="https://picsum.photos/seed/sharukh/600/600" alt="Preview" className="w-full h-full object-cover" />
-                    </div>
-                    <Input defaultValue="https://picsum.photos/seed/sharukh/600/600" className="bg-white/5 border-white/10 h-12 px-5 rounded-xl flex-1" />
-                  </div>
-                </div>
+                <ImageControl id="profile" label="Identity Artifact (Profile Image)" currentUrl="https://picsum.photos/seed/sharukh/600/600" />
                 <div className="space-y-2">
                   <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">The Origin Story</label>
-                  <Textarea rows={6} className="bg-white/5 border-white/10 p-6 rounded-2xl resize-none leading-relaxed text-white/60 text-sm" defaultValue="I am a creative architect specializing in frontend technologies. My journey is defined by a relentless pursuit of pixel perfection..." />
+                  <Textarea rows={6} className="bg-white/5 border-white/10 p-6 rounded-2xl resize-none leading-relaxed text-white/60 text-sm" defaultValue="I am a creative architect specializing in frontend technologies..." />
                 </div>
                 <div className="grid grid-cols-2 gap-8">
                   <div className="space-y-2">
@@ -232,34 +290,32 @@ export default function AdminDashboard() {
             {activeTab === "projects" && (
               <div className="space-y-6">
                 {[
-                  { name: "Lane Detection AI", img: "https://picsum.photos/seed/lane/800/600", type: "Machine Learning", tags: ["Python", "OpenCV"] },
-                  { name: "Enterprise POS", img: "https://picsum.photos/seed/pos/800/600", type: "Web Engine", tags: ["Next.js", "Firebase"] }
-                ].map((project, i) => (
-                  <div key={i} className="glass-card p-8 border-white/5 flex gap-8 items-start group">
-                    <div className="w-48 aspect-[16/10] bg-white/5 rounded-2xl border border-white/10 overflow-hidden shrink-0 group-hover:border-primary/40 transition-all duration-500 shadow-xl">
-                      <img src={project.img} alt={project.name} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-all" />
+                  { id: "p1", name: "Lane Detection AI", img: "https://picsum.photos/seed/lane/800/600", type: "Machine Learning", tags: ["Python", "OpenCV"] },
+                  { id: "p2", name: "Enterprise POS", img: "https://picsum.photos/seed/pos/800/600", type: "Web Engine", tags: ["Next.js", "Firebase"] }
+                ].map((project) => (
+                  <div key={project.id} className="glass-card p-8 border-white/5 space-y-8">
+                    <div className="flex justify-between items-start">
+                      <Input defaultValue={project.name} className="bg-transparent border-none p-0 text-xl font-bold h-auto w-auto focus-visible:ring-0 text-white" />
+                      <button className="p-2 text-white/10 hover:text-red-400 transition-colors bg-white/5 rounded-lg hover:bg-red-400/10">
+                        <Trash2 size={14} />
+                      </button>
                     </div>
-                    <div className="flex-1 space-y-4">
-                      <div className="flex justify-between items-start">
-                        <Input defaultValue={project.name} className="bg-transparent border-none p-0 text-xl font-bold h-auto w-auto focus-visible:ring-0 text-white" />
-                        <button className="p-2 text-white/10 hover:text-red-400 transition-colors bg-white/5 rounded-lg hover:bg-red-400/10">
-                          <Trash2 size={14} />
-                        </button>
+                    <ImageControl id={`project-${project.id}`} label="Project Artifact Asset" currentUrl={project.img} />
+                    <div className="grid grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">Category</label>
+                        <Input defaultValue={project.type} className="bg-white/5 border-white/10 h-12 px-5 rounded-xl" />
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <Input defaultValue={project.type} className="bg-white/5 border-white/10 h-10 px-4 rounded-lg text-[11px]" placeholder="Category" />
-                        <Input defaultValue={project.img} className="bg-white/5 border-white/10 h-10 px-4 rounded-lg text-[11px]" placeholder="Asset URL" />
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        {project.tags.map(tag => (
-                          <span key={tag} className="px-3 py-1 bg-white/5 rounded-full text-[9px] font-black uppercase border border-white/10 text-white/30 flex items-center gap-2">
-                            {tag}
-                            <button className="hover:text-red-400"><Plus className="rotate-45" size={10} /></button>
-                          </span>
-                        ))}
-                        <button className="px-3 py-1 bg-primary/10 text-primary rounded-full text-[9px] font-black uppercase flex items-center gap-2 border border-primary/20 hover:bg-primary hover:text-white transition-all">
-                          <Plus size={10} /> Add Tag
-                        </button>
+                      <div className="space-y-2">
+                        <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">Core Tags</label>
+                        <div className="flex flex-wrap gap-2">
+                          {project.tags.map(tag => (
+                            <span key={tag} className="px-3 py-1 bg-white/5 rounded-full text-[9px] font-black uppercase border border-white/10 text-white/30 flex items-center gap-2">
+                              {tag}
+                              <Plus className="rotate-45" size={10} />
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -271,32 +327,25 @@ export default function AdminDashboard() {
             )}
 
             {activeTab === "gallery" && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-6">
-                  {[1, 2, 3, 4].map((i) => (
-                    <div key={i} className="glass-card p-6 border-white/5 group">
-                      <div className="aspect-video rounded-xl overflow-hidden bg-white/5 mb-4 border border-white/10 relative">
-                         <img src={`https://picsum.photos/seed/gallery${i}/800/600`} alt="Gallery Preview" className="w-full h-full object-cover opacity-40 group-hover:opacity-100 transition-opacity" />
-                         <button className="absolute top-3 right-3 p-2 bg-red-400/20 text-red-400 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                           <Trash2 size={14} />
-                         </button>
-                      </div>
-                      <div className="space-y-3">
-                         <Input defaultValue={`Lab Experiment ${i}`} className="bg-white/5 border-white/10 h-10 px-4 rounded-lg text-xs font-bold" />
-                         <Input defaultValue="UI Design" className="bg-white/5 border-white/10 h-10 px-4 rounded-lg text-[10px] uppercase tracking-widest text-white/30" />
-                         <Input defaultValue={`https://picsum.photos/seed/gallery${i}/800/600`} className="bg-white/5 border-white/10 h-10 px-4 rounded-lg text-[10px]" placeholder="Asset URL" />
-                      </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="glass-card p-6 border-white/5 space-y-6">
+                    <div className="flex justify-between items-center">
+                       <Input defaultValue={`Lab Experiment ${i}`} className="bg-transparent border-none p-0 text-sm font-bold h-auto focus-visible:ring-0" />
+                       <button className="p-1.5 text-white/10 hover:text-red-400">
+                         <Trash2 size={12} />
+                       </button>
                     </div>
-                  ))}
-                </div>
-                <button className="w-full py-8 border border-dashed border-white/10 rounded-2xl text-white/20 text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-white/[0.02] hover:border-white/30 transition-all">
-                  <Plus size={16} /> Add Lab Asset
-                </button>
+                    <ImageControl id={`gallery-${i}`} label="Asset Frame" currentUrl={`https://picsum.photos/seed/gallery${i}/800/600`} />
+                    <Input defaultValue="UI Design" className="bg-white/5 border-white/10 h-10 px-4 rounded-lg text-[10px] uppercase tracking-widest text-white/30" />
+                  </div>
+                ))}
               </div>
             )}
 
+            {/* Other tabs follow similar pattern for image/content editing */}
             {activeTab === "journey" && (
-              <div className="space-y-6">
+               <div className="space-y-6">
                 {[
                   { year: "2023", title: "Visual Genesis", desc: "Mastering the physics of pixels..." },
                   { year: "2024", title: "Logic Architecture", desc: "Developing deep structural understanding..." }
@@ -317,46 +366,31 @@ export default function AdminDashboard() {
                     </button>
                   </div>
                 ))}
-                <button className="w-full py-8 border border-dashed border-white/10 rounded-2xl text-white/20 text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-white/[0.02] hover:border-white/30 transition-all">
-                  <Plus size={16} /> New Milestone
-                </button>
               </div>
             )}
 
             {activeTab === "credentials" && (
               <div className="space-y-6">
                 {[
-                  { title: "Web Dev Internship", issuer: "Skypark IT Tech", year: "2024" },
-                  { title: "Google UX Design", issuer: "Coursera", year: "2023" }
-                ].map((cert, i) => (
-                   <div key={i} className="glass-card p-8 border-white/5 flex gap-8 items-center">
-                    <div className="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center shrink-0 border border-secondary/20 text-secondary">
-                      <Award size={28} />
+                  { id: "c1", title: "Web Dev Internship", issuer: "Skypark IT Tech", year: "2024", img: "https://picsum.photos/seed/cert1/800/600" },
+                ].map((cert) => (
+                  <div key={cert.id} className="glass-card p-8 border-white/5 space-y-6">
+                    <div className="flex justify-between items-center">
+                       <h4 className="text-sm font-bold">Node {cert.id}</h4>
+                       <button className="text-red-400/40 hover:text-red-400"><Trash2 size={14} /></button>
                     </div>
-                    <div className="flex-1 grid grid-cols-2 gap-4">
-                      <div className="space-y-1">
-                        <label className="text-[8px] font-black text-white/20 uppercase tracking-widest">Certificate Title</label>
-                        <Input defaultValue={cert.title} className="bg-white/5 border-white/10 h-10 px-4 rounded-lg text-xs font-bold" />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-[8px] font-black text-white/20 uppercase tracking-widest">Issuing Body</label>
-                        <Input defaultValue={cert.issuer} className="bg-white/5 border-white/10 h-10 px-4 rounded-lg text-xs" />
-                      </div>
+                    <ImageControl id={`cert-${cert.id}`} label="Certificate Artifact" currentUrl={cert.img} />
+                    <div className="grid grid-cols-2 gap-6">
+                      <Input defaultValue={cert.title} placeholder="Title" className="bg-white/5 border-white/10 h-12 rounded-xl" />
+                      <Input defaultValue={cert.issuer} placeholder="Issuer" className="bg-white/5 border-white/10 h-12 rounded-xl" />
                     </div>
-                    <button className="p-2 text-white/10 hover:text-red-400 transition-colors bg-white/5 rounded-lg">
-                      <Trash2 size={14} />
-                    </button>
                   </div>
                 ))}
-                <button className="w-full py-8 border border-dashed border-white/10 rounded-2xl text-white/20 text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-white/[0.02] hover:border-white/30 transition-all">
-                  <Plus size={16} /> Add Credential Node
-                </button>
               </div>
             )}
 
             {activeTab === "settings" && (
               <div className="space-y-12">
-                {/* Module Visibility Protocols */}
                 <div className="glass-card p-10 border-white/5 space-y-8">
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-1.5 h-1.5 rounded-full bg-primary" />
@@ -381,27 +415,6 @@ export default function AdminDashboard() {
                 <div className="glass-card p-10 border-white/5 space-y-12">
                   <div className="space-y-6">
                     <div className="flex items-center gap-3 mb-6">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                      <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Core Contact Node</h3>
-                    </div>
-                    <div className="grid grid-cols-2 gap-8">
-                      <div className="space-y-2">
-                        <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">Official Email</label>
-                        <Input defaultValue="hello@sharukh.design" className="bg-white/5 border-white/10 h-12 px-5 rounded-xl text-sm" />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">Secure Line</label>
-                        <Input defaultValue="+91 98765 43210" className="bg-white/5 border-white/10 h-12 px-5 rounded-xl text-sm" />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">Geographic Anchor (Location)</label>
-                      <Input defaultValue="Nilgiris, Tamil Nadu, India" className="bg-white/5 border-white/10 h-12 px-5 rounded-xl text-sm" />
-                    </div>
-                  </div>
-
-                  <div className="space-y-6 pt-8 border-t border-white/5">
-                    <div className="flex items-center gap-3 mb-6">
                       <div className="w-1.5 h-1.5 rounded-full bg-secondary" />
                       <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-secondary">Global Mission Platforms</h3>
                     </div>
@@ -413,7 +426,7 @@ export default function AdminDashboard() {
                         { name: "Twitter", icon: Share2, url: "twitter.com/sharukh" }
                       ].map((platform) => (
                         <div key={platform.name} className="space-y-2">
-                          <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">{platform.name} Protocol</label>
+                          <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">{platform.name}</label>
                           <div className="relative">
                             <platform.icon size={12} className="absolute left-5 top-1/2 -translate-y-1/2 text-white/20" />
                             <Input defaultValue={platform.url} className="bg-white/5 border-white/10 h-12 pl-12 pr-5 rounded-xl w-full text-xs" />
