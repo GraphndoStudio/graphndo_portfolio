@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -25,13 +24,13 @@ export default function About() {
           start: "top 85%",
           toggleActions: "play none none none"
         },
-        y: 120,
+        y: 80,
         opacity: 0,
-        duration: 1.8,
+        duration: 1.5,
         ease: "power4.out"
       });
 
-      // Line by Line Reveal with sophisticated ease
+      // Line by Line Reveal
       const lines = gsap.utils.toArray(".reveal-p");
       lines.forEach((line: any) => {
         gsap.from(line, {
@@ -39,58 +38,58 @@ export default function About() {
             trigger: line,
             start: "top 92%",
           },
-          y: 30,
+          y: 20,
           opacity: 0,
-          duration: 1.4,
+          duration: 1.2,
           ease: "expo.out"
         });
       });
 
       // Image Parallax on Scroll
-      gsap.to(imgRef.current, {
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top bottom",
-          end: "bottom top",
-          scrub: true
-        },
-        y: -50,
-        ease: "none"
-      });
+      if (window.innerWidth > 768) {
+        gsap.to(imgRef.current, {
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true
+          },
+          y: -40,
+          ease: "none"
+        });
+      }
     }, containerRef);
 
     return () => ctx.revert();
   }, []);
 
   return (
-    <section id="about" ref={containerRef} className="py-40 relative">
+    <section id="about" ref={containerRef} className="py-24 md:py-40 relative">
       <div className="container mx-auto px-6 section-wrap">
-        <div className="grid md:grid-cols-2 gap-24 items-center">
-          <div className="relative group">
-            <div ref={imgRef} className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden glass-card p-3 shadow-2xl">
-              <div className="relative w-full h-full rounded-[2rem] overflow-hidden">
+        <div className="grid lg:grid-cols-2 gap-16 md:gap-24 items-center">
+          <div className="relative group max-w-md mx-auto lg:max-w-none">
+            <div ref={imgRef} className="relative aspect-[4/5] rounded-[2rem] overflow-hidden glass-card p-2 shadow-2xl">
+              <div className="relative w-full h-full rounded-[1.5rem] overflow-hidden">
                 <Image
                   src={profileImg.imageUrl}
                   alt="Sharukh H"
                   fill
                   priority
                   sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover grayscale hover:grayscale-0 transition-all duration-1000 scale-110 group-hover:scale-100"
+                  className="object-cover grayscale hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100"
                   data-ai-hint={profileImg.imageHint}
                 />
               </div>
             </div>
-            {/* Floating Editorial Accents */}
-            <div className="absolute -top-10 -right-10 w-48 h-48 border border-white/10 rounded-full animate-spin-slow pointer-events-none opacity-20" />
           </div>
 
-          <div className="space-y-12">
-            <h2 className="text-5xl md:text-7xl font-bold tracking-tighter leading-none reveal-p">
+          <div className="space-y-8 md:space-y-12 text-center lg:text-left">
+            <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter leading-tight reveal-p">
               Clean Code Meets <br />
               <span className="gradient-text">Emotional Design.</span>
             </h2>
             
-            <div className="space-y-8 text-xl text-white/70 leading-relaxed font-medium">
+            <div className="space-y-6 md:space-y-8 text-lg md:text-xl text-white/70 leading-relaxed font-medium max-w-2xl mx-auto lg:mx-0">
               <p className="reveal-p">
                 I am a creative architect specializing in frontend technologies. My journey is defined by a relentless pursuit of pixel perfection and fluid user experiences.
               </p>
@@ -99,14 +98,14 @@ export default function About() {
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-12 pt-10 reveal-p">
-              <div className="space-y-2 border-l-2 border-primary/30 pl-8">
-                <h4 className="text-5xl font-bold tracking-tighter">2+</h4>
-                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">Years of Vision</p>
+            <div className="grid grid-cols-2 gap-8 md:gap-12 pt-6 reveal-p">
+              <div className="space-y-1 border-l-2 border-primary/30 pl-6 md:pl-8 text-left">
+                <h4 className="text-4xl md:text-5xl font-bold tracking-tighter">2+</h4>
+                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground">Years of Vision</p>
               </div>
-              <div className="space-y-2 border-l-2 border-secondary/30 pl-8">
-                <h4 className="text-5xl font-bold tracking-tighter">50+</h4>
-                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">Digital Artifacts</p>
+              <div className="space-y-1 border-l-2 border-secondary/30 pl-6 md:pl-8 text-left">
+                <h4 className="text-4xl md:text-5xl font-bold tracking-tighter">50+</h4>
+                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground">Digital Artifacts</p>
               </div>
             </div>
           </div>

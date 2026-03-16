@@ -23,7 +23,7 @@
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 217 91% 60%;
-    --radius: 1.5rem;
+    --radius: 1rem;
   }
 }
 
@@ -35,6 +35,7 @@
     @apply bg-[#030305] text-foreground selection:bg-primary/30 selection:text-white overflow-x-hidden antialiased;
     font-variant-ligatures: none;
     font-weight: 500;
+    font-size: 16px; /* Standardizing base size */
   }
 }
 
@@ -44,7 +45,7 @@
   }
   
   .glass-card {
-    @apply glass rounded-[2.5rem] transition-all duration-500;
+    @apply glass rounded-[2rem] transition-all duration-500;
   }
 
   .gradient-text {
@@ -62,13 +63,13 @@
   }
 
   .editorial-year {
-    @apply absolute text-[25vw] font-bold text-white/[0.03] select-none pointer-events-none -z-10 tracking-tighter leading-none;
+    @apply absolute text-[20vw] font-bold text-white/[0.02] select-none pointer-events-none -z-10 tracking-tighter leading-none;
   }
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -76,12 +77,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 20px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 canvas {

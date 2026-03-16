@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -54,92 +53,81 @@ export default function Projects() {
 
     setCurrentIndex(newIndex);
 
-    // Dynamic sizing calculation
-    const isMobile = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
-    const cardWidth = isMobile ? window.innerWidth * 0.85 : 600;
-    const gap = isMobile ? 40 : 80;
+    const isMobile = window.innerWidth < 768;
+    const cardWidth = isMobile ? (window.innerWidth - 48) : 560;
+    const gap = isMobile ? 16 : 40;
     const moveX = -newIndex * (cardWidth + gap);
 
     gsap.to(scrollContainerRef.current, {
       x: moveX,
-      duration: 1.5,
+      duration: 1.2,
       ease: "expo.out",
-    });
-
-    // Animate active state
-    PROJECTS.forEach((_, idx) => {
-      gsap.to(`.project-card-${idx}`, {
-        opacity: idx === newIndex ? 1 : 0.3,
-        scale: idx === newIndex ? 1 : 0.9,
-        duration: 1,
-        ease: "power3.out"
-      });
     });
   };
 
   return (
-    <section id="projects" className="relative py-40 overflow-hidden bg-[#030305]">
-      <div className="container mx-auto px-6 mb-24 flex flex-col md:flex-row md:items-end justify-between gap-12">
-        <div className="space-y-6">
-          <h2 className="text-7xl md:text-[12rem] font-black tracking-tighter leading-none opacity-10 text-white select-none">
+    <section id="projects" className="relative py-24 md:py-40 overflow-hidden bg-[#030305]">
+      <div className="container mx-auto px-6 mb-12 md:mb-24 flex flex-col md:flex-row md:items-end justify-between gap-8 md:gap-12">
+        <div className="space-y-4 md:space-y-6">
+          <h2 className="text-5xl md:text-8xl lg:text-[10rem] font-black tracking-tighter leading-none opacity-10 text-white select-none">
             LOCKED<br/>WORKS
           </h2>
-          <div className="flex items-center gap-6 text-primary font-black uppercase tracking-[0.4em] text-sm">
-            Exhibition No. 04 <ArrowRight size={20} />
+          <div className="flex items-center gap-4 md:gap-6 text-primary font-black uppercase tracking-[0.3em] md:tracking-[0.4em] text-[10px] md:text-sm">
+            Exhibition No. 04 <ArrowRight size={16} />
           </div>
         </div>
 
-        <div className="flex gap-6">
+        <div className="flex gap-4">
           <button
             onClick={() => slide('prev')}
             disabled={currentIndex === 0}
-            className="w-20 h-20 rounded-full glass border border-white/10 flex items-center justify-center hover:bg-primary hover:border-primary transition-all disabled:opacity-10 disabled:cursor-not-allowed interactive shadow-2xl"
+            className="w-12 h-12 md:w-16 md:h-16 rounded-full glass border border-white/10 flex items-center justify-center hover:bg-primary transition-all disabled:opacity-10 interactive"
           >
-            <ChevronLeft size={32} />
+            <ChevronLeft size={24} />
           </button>
           <button
             onClick={() => slide('next')}
             disabled={currentIndex === PROJECTS.length - 1}
-            className="w-20 h-20 rounded-full glass border border-white/10 flex items-center justify-center hover:bg-primary hover:border-primary transition-all disabled:opacity-10 disabled:cursor-not-allowed interactive shadow-2xl"
+            className="w-12 h-12 md:w-16 md:h-16 rounded-full glass border border-white/10 flex items-center justify-center hover:bg-primary transition-all disabled:opacity-10 interactive"
           >
-            <ChevronRight size={32} />
+            <ChevronRight size={24} />
           </button>
         </div>
       </div>
       
-      <div className="px-6 md:px-[15vw]">
-        <div ref={scrollContainerRef} className="flex gap-10 md:gap-20 items-center">
+      <div className="px-6 md:px-[10vw]">
+        <div ref={scrollContainerRef} className="flex gap-4 md:gap-10 items-center">
           {PROJECTS.map((project, idx) => (
             <div 
               key={project.id} 
-              className={`w-[85vw] md:w-[600px] flex-shrink-0 project-card-${idx} transition-all duration-700 ${currentIndex === idx ? 'opacity-100' : 'opacity-30 scale-90'}`}
+              className={`w-[calc(100vw-48px)] md:w-[560px] flex-shrink-0 transition-all duration-700 ${currentIndex === idx ? 'opacity-100' : 'opacity-20 scale-95'}`}
             >
-              <div className="group relative glass-card p-8 md:p-10 overflow-hidden bg-white/[0.01]">
-                <div className="relative aspect-[16/10] rounded-3xl overflow-hidden mb-10 shadow-2xl">
+              <div className="group relative glass-card p-6 md:p-8 overflow-hidden bg-white/[0.01]">
+                <div className="relative aspect-[16/10] rounded-2xl overflow-hidden mb-6 md:mb-8 shadow-xl">
                   <Image
                     src={project.img || ''}
                     alt={project.title}
                     fill
                     priority={idx === 0}
-                    sizes="(max-width: 768px) 85vw, 600px"
-                    className="object-cover transition-transform duration-1000 group-hover:scale-110"
+                    sizes="(max-width: 768px) 90vw, 560px"
+                    className="object-cover transition-transform duration-1000 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center gap-8 backdrop-blur-sm">
-                    <button className="w-16 h-16 rounded-full glass flex items-center justify-center hover:scale-110 transition-transform interactive border-primary/50">
-                      <ExternalLink size={28} className="text-primary" />
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center gap-6 backdrop-blur-[2px]">
+                    <button className="w-12 h-12 rounded-full glass flex items-center justify-center hover:scale-110 transition-transform">
+                      <ExternalLink size={20} className="text-primary" />
                     </button>
-                    <button className="w-16 h-16 rounded-full glass flex items-center justify-center hover:scale-110 transition-transform interactive">
-                      <Github size={28} />
+                    <button className="w-12 h-12 rounded-full glass flex items-center justify-center hover:scale-110 transition-transform">
+                      <Github size={20} />
                     </button>
                   </div>
                 </div>
 
-                <div className="space-y-6">
-                  <span className="text-primary font-black text-xs tracking-[0.5em] uppercase opacity-80">{project.type}</span>
-                  <h3 className="text-4xl md:text-5xl font-bold tracking-tight text-white">{project.title}</h3>
-                  <div className="flex flex-wrap gap-3">
+                <div className="space-y-4">
+                  <span className="text-primary font-black text-[9px] tracking-[0.4em] uppercase opacity-80">{project.type}</span>
+                  <h3 className="text-2xl md:text-4xl font-bold tracking-tight text-white">{project.title}</h3>
+                  <div className="flex flex-wrap gap-2">
                     {project.tags.map(tag => (
-                      <span key={tag} className="px-6 py-2 bg-white/5 rounded-full text-xs font-bold border border-white/10 text-white/70">
+                      <span key={tag} className="px-4 py-1.5 bg-white/5 rounded-full text-[10px] font-bold border border-white/10 text-white/50">
                         {tag}
                       </span>
                     ))}
@@ -149,22 +137,22 @@ export default function Projects() {
             </div>
           ))}
           
-          <div className="w-[50vw] flex-shrink-0 flex items-center justify-center">
-            <button className="text-4xl md:text-7xl font-black hover:text-primary transition-all hover:scale-110 transform duration-700 gradient-text interactive tracking-tighter">
+          <div className="w-[40vw] flex-shrink-0 flex items-center justify-center">
+            <button className="text-2xl md:text-5xl font-black hover:text-primary transition-all hover:scale-105 transform duration-700 gradient-text interactive tracking-tighter">
               VIEW ARCHIVE →
             </button>
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-6 mt-24 flex items-center gap-6">
-        <div className="h-[3px] flex-1 bg-white/5 rounded-full overflow-hidden shadow-inner">
+      <div className="container mx-auto px-6 mt-12 md:mt-20 flex items-center gap-4 md:gap-6">
+        <div className="h-[2px] flex-1 bg-white/5 rounded-full overflow-hidden">
           <div 
-            className="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-1000 ease-in-out shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+            className="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-700 ease-in-out"
             style={{ width: `${((currentIndex + 1) / PROJECTS.length) * 100}%` }}
           />
         </div>
-        <span className="text-sm font-black font-mono tracking-tighter opacity-40 text-white">
+        <span className="text-[10px] font-black font-mono tracking-tighter opacity-30 text-white">
           0{currentIndex + 1} / 0{PROJECTS.length}
         </span>
       </div>

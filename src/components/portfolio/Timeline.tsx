@@ -10,7 +10,7 @@ const STEPS = [
   { year: "2023", title: "Visual Genesis", desc: "Mastering the physics of pixels and the geometry of layout through core design studies." },
   { year: "2024", title: "Logic Architecture", desc: "Developing deep structural understanding of algorithmic efficiency and software patterns." },
   { year: "2025", title: "Industry Immersion", desc: "Scaling digital ecosystems at Skypark IT Tech, bridging engineering and human emotion." },
-  { year: "2026", title: "Creative Agency", desc: "Currently architecting modern web experiences for a global roster of visionary clients." },
+  { year: "2026", title: "Creative Agency", desc: "Currently architecting modern web experiences for a visionary roster of clients." },
 ];
 
 export default function Timeline() {
@@ -45,17 +45,19 @@ export default function Timeline() {
         const content = item.querySelector(".timeline-content");
         const dot = item.querySelector(".timeline-dot");
 
-        gsap.from(year, {
-          scrollTrigger: {
-            trigger: item,
-            start: "top 85%",
-            toggleActions: "play none none reverse"
-          },
-          x: i % 2 === 0 ? -100 : 100,
-          opacity: 0,
-          duration: 2,
-          ease: "power4.out"
-        });
+        if (year && window.innerWidth > 768) {
+          gsap.from(year, {
+            scrollTrigger: {
+              trigger: item,
+              start: "top 85%",
+              toggleActions: "play none none reverse"
+            },
+            x: i % 2 === 0 ? -60 : 60,
+            opacity: 0,
+            duration: 1.5,
+            ease: "power4.out"
+          });
+        }
 
         gsap.from(content, {
           scrollTrigger: {
@@ -63,9 +65,9 @@ export default function Timeline() {
             start: "top 80%",
             toggleActions: "play none none reverse"
           },
-          y: 60,
+          y: 40,
           opacity: 0,
-          duration: 1.5,
+          duration: 1.2,
           ease: "power3.out"
         });
 
@@ -76,7 +78,7 @@ export default function Timeline() {
           },
           scale: 0,
           opacity: 0,
-          duration: 1,
+          duration: 0.8,
           ease: "back.out(2)"
         });
       });
@@ -86,43 +88,44 @@ export default function Timeline() {
   }, []);
 
   return (
-    <section id="journey" ref={containerRef} className="py-60 relative overflow-hidden bg-[#030305]">
+    <section id="journey" ref={containerRef} className="py-32 md:py-60 relative overflow-hidden bg-[#030305]">
       <div className="container mx-auto px-6">
-        <header className="text-center mb-60">
-          <h2 className="text-7xl md:text-[10rem] font-bold tracking-tighter text-white">
+        <header className="text-center mb-32 md:mb-60">
+          <h2 className="text-5xl md:text-8xl lg:text-[10rem] font-bold tracking-tighter text-white">
             The <span className="gradient-text">Odyssey</span>
           </h2>
-          <p className="text-white/50 mt-8 text-2xl max-w-2xl mx-auto font-medium">
+          <p className="text-white/50 mt-4 md:mt-8 text-lg md:text-2xl max-w-2xl mx-auto font-medium">
             A chronological journey through the evolution of my digital craft.
           </p>
         </header>
         
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-0">
-          <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-[2px] bg-white/5 z-0" />
+        <div className="relative max-w-5xl mx-auto">
+          {/* Vertical Line Container */}
+          <div className="absolute left-6 md:left-1/2 -translate-x-1/2 top-0 bottom-0 w-[2px] bg-white/5 z-0" />
           
           <div 
             ref={lineRef}
-            className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-primary via-secondary to-primary z-10 origin-top shadow-[0_0_15px_rgba(59,130,246,0.3)]" 
+            className="absolute left-6 md:left-1/2 -translate-x-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-primary via-secondary to-primary z-10 origin-top shadow-[0_0_15px_rgba(59,130,246,0.3)]" 
           />
 
-          <div className="space-y-80">
+          <div className="space-y-40 md:space-y-80">
             {STEPS.map((step, idx) => (
-              <div key={step.year} className="timeline-item relative group">
-                <span className={`editorial-year transition-all duration-1000 group-hover:text-primary/10 ${idx % 2 === 0 ? '-left-20' : '-right-20'}`}>
+              <div key={step.year} className="timeline-item relative group pl-16 md:pl-0">
+                <span className={`editorial-year transition-all duration-1000 group-hover:text-primary/10 hidden md:block ${idx % 2 === 0 ? '-left-12' : '-right-12'}`}>
                   {step.year}
                 </span>
 
-                <div className="timeline-dot absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-background border-2 border-primary z-20 shadow-[0_0_20px_rgba(59,130,246,0.8)] animate-pulse" />
+                <div className="timeline-dot absolute left-6 md:left-1/2 -translate-x-1/2 top-0 md:top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-background border-2 border-primary z-20 shadow-[0_0_20px_rgba(59,130,246,0.6)]" />
                 
-                <div className={`flex ${idx % 2 === 0 ? 'md:justify-end justify-center' : 'md:justify-start justify-center'}`}>
-                  <div className="timeline-content w-full md:max-w-xl glass-card p-10 md:p-16 relative z-10 backdrop-blur-3xl hover:border-primary/40 transition-all duration-500 bg-white/[0.01]">
-                    <span className="text-primary font-black text-xs tracking-[0.5em] uppercase mb-8 block opacity-80">
+                <div className={`flex ${idx % 2 === 0 ? 'md:justify-end' : 'md:justify-start'}`}>
+                  <div className="timeline-content w-full md:max-w-md glass-card p-8 md:p-12 relative z-10 bg-white/[0.01]">
+                    <span className="text-primary font-black text-[10px] tracking-[0.4em] uppercase mb-4 block opacity-80">
                       Milestone 0{idx + 1}
                     </span>
-                    <h3 className="text-4xl md:text-6xl font-bold mb-8 tracking-tight group-hover:gradient-text transition-all duration-500 text-white">
-                      {step.title}
+                    <h3 className="text-2xl md:text-4xl font-bold mb-4 md:mb-6 tracking-tight group-hover:gradient-text transition-all duration-500 text-white">
+                      {step.title} — {step.year}
                     </h3>
-                    <p className="text-xl md:text-2xl text-white/60 leading-relaxed font-medium">
+                    <p className="text-base md:text-lg text-white/60 leading-relaxed font-medium">
                       {step.desc}
                     </p>
                   </div>
