@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -39,7 +38,7 @@ const PROJECTS = [
 ];
 
 export default function Projects() {
-  const sectionRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const slide = (direction: 'next' | 'prev') => {
@@ -54,83 +53,90 @@ export default function Projects() {
 
     setCurrentIndex(newIndex);
 
-    // Calculate displacement: card width (600) + gap (80)
-    // On mobile, we might need a different approach, but sticking to desktop-first premium feel
-    const moveX = -newIndex * (600 + 80);
+    // Dynamic sizing calculation
+    const isMobile = window.innerWidth < 768;
+    const cardWidth = isMobile ? window.innerWidth * 0.85 : 600;
+    const gap = isMobile ? 40 : 80;
+    const moveX = -newIndex * (cardWidth + gap);
 
-    gsap.to(sectionRef.current, {
+    gsap.to(scrollContainerRef.current, {
       x: moveX,
-      duration: 1.2,
+      duration: 1.5,
       ease: "expo.out",
     });
 
-    // Animate the active card specifically for extra pop
-    gsap.fromTo(
-      `.project-card-${newIndex}`,
-      { scale: 0.95, opacity: 0.5 },
-      { scale: 1, opacity: 1, duration: 1, ease: "power3.out" }
-    );
+    // Animate active state
+    PROJECTS.forEach((_, idx) => {
+      gsap.to(`.project-card-${idx}`, {
+        opacity: idx === newIndex ? 1 : 0.3,
+        scale: idx === newIndex ? 1 : 0.9,
+        duration: 1,
+        ease: "power3.out"
+      });
+    });
   };
 
   return (
-    <section id="projects" className="relative py-32 overflow-hidden bg-[#030305]">
-      <div className="container mx-auto px-6 mb-20 flex flex-col md:flex-row md:items-end justify-between gap-8">
-        <div className="space-y-4">
-          <h2 className="text-5xl md:text-8xl font-bold tracking-tighter leading-none opacity-20">LOCKED<br/>WORKS</h2>
-          <div className="flex items-center gap-4 text-primary font-bold uppercase tracking-widest text-sm">
-            Exhibition No. 04 <ArrowRight size={16} />
+    <section id="projects" className="relative py-40 overflow-hidden bg-[#030305]">
+      <div className="container mx-auto px-6 mb-24 flex flex-col md:flex-row md:items-end justify-between gap-12">
+        <div className="space-y-6">
+          <h2 className="text-7xl md:text-[12rem] font-black tracking-tighter leading-none opacity-10 text-white select-none">
+            LOCKED<br/>WORKS
+          </h2>
+          <div className="flex items-center gap-6 text-primary font-black uppercase tracking-[0.4em] text-sm">
+            Exhibition No. 04 <ArrowRight size={20} />
           </div>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex gap-6">
           <button
             onClick={() => slide('prev')}
             disabled={currentIndex === 0}
-            className="w-16 h-16 rounded-full glass border border-white/10 flex items-center justify-center hover:bg-primary hover:border-primary transition-all disabled:opacity-20 disabled:cursor-not-allowed interactive"
+            className="w-20 h-20 rounded-full glass border border-white/10 flex items-center justify-center hover:bg-primary hover:border-primary transition-all disabled:opacity-10 disabled:cursor-not-allowed interactive shadow-2xl"
           >
-            <ChevronLeft size={24} />
+            <ChevronLeft size={32} />
           </button>
           <button
             onClick={() => slide('next')}
             disabled={currentIndex === PROJECTS.length - 1}
-            className="w-16 h-16 rounded-full glass border border-white/10 flex items-center justify-center hover:bg-primary hover:border-primary transition-all disabled:opacity-20 disabled:cursor-not-allowed interactive"
+            className="w-20 h-20 rounded-full glass border border-white/10 flex items-center justify-center hover:bg-primary hover:border-primary transition-all disabled:opacity-10 disabled:cursor-not-allowed interactive shadow-2xl"
           >
-            <ChevronRight size={24} />
+            <ChevronRight size={32} />
           </button>
         </div>
       </div>
       
-      <div className="px-6 md:px-24">
-        <div ref={sectionRef} className="flex gap-20 items-center">
+      <div className="px-6 md:px-[15vw]">
+        <div ref={scrollContainerRef} className="flex gap-10 md:gap-20 items-center">
           {PROJECTS.map((project, idx) => (
             <div 
               key={project.id} 
-              className={`w-[85vw] md:w-[600px] flex-shrink-0 project-card-${idx} transition-opacity duration-500 ${currentIndex === idx ? 'opacity-100' : 'opacity-40'}`}
+              className={`w-[85vw] md:w-[600px] flex-shrink-0 project-card-${idx} transition-all duration-700 ${currentIndex === idx ? 'opacity-100' : 'opacity-30 scale-90'}`}
             >
-              <div className="group relative glass-card p-6 overflow-hidden">
-                <div className="relative aspect-video rounded-2xl overflow-hidden mb-8">
+              <div className="group relative glass-card p-8 md:p-10 overflow-hidden bg-white/[0.01]">
+                <div className="relative aspect-[16/10] rounded-3xl overflow-hidden mb-10 shadow-2xl">
                   <Image
                     src={project.img || ''}
                     alt={project.title}
                     fill
                     className="object-cover transition-transform duration-1000 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center gap-6">
-                    <button className="w-14 h-14 rounded-full glass flex items-center justify-center hover:scale-110 transition-transform interactive">
-                      <ExternalLink size={24} />
+                  <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center gap-8 backdrop-blur-sm">
+                    <button className="w-16 h-16 rounded-full glass flex items-center justify-center hover:scale-110 transition-transform interactive border-primary/50">
+                      <ExternalLink size={28} className="text-primary" />
                     </button>
-                    <button className="w-14 h-14 rounded-full glass flex items-center justify-center hover:scale-110 transition-transform interactive">
-                      <Github size={24} />
+                    <button className="w-16 h-16 rounded-full glass flex items-center justify-center hover:scale-110 transition-transform interactive">
+                      <Github size={28} />
                     </button>
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <span className="text-primary font-bold text-xs tracking-widest uppercase">{project.type}</span>
-                  <h3 className="text-4xl font-bold tracking-tight">{project.title}</h3>
-                  <div className="flex flex-wrap gap-2">
+                <div className="space-y-6">
+                  <span className="text-primary font-black text-xs tracking-[0.5em] uppercase opacity-80">{project.type}</span>
+                  <h3 className="text-4xl md:text-5xl font-bold tracking-tight text-white">{project.title}</h3>
+                  <div className="flex flex-wrap gap-3">
                     {project.tags.map(tag => (
-                      <span key={tag} className="px-4 py-1 bg-white/5 rounded-full text-[10px] font-bold border border-white/5">
+                      <span key={tag} className="px-6 py-2 bg-white/5 rounded-full text-xs font-bold border border-white/10 text-white/70">
                         {tag}
                       </span>
                     ))}
@@ -141,22 +147,21 @@ export default function Projects() {
           ))}
           
           <div className="w-[50vw] flex-shrink-0 flex items-center justify-center">
-            <button className="text-3xl md:text-5xl font-bold hover:text-primary transition-all hover:scale-110 transform duration-500 gradient-text interactive">
+            <button className="text-4xl md:text-7xl font-black hover:text-primary transition-all hover:scale-110 transform duration-700 gradient-text interactive tracking-tighter">
               VIEW ARCHIVE →
             </button>
           </div>
         </div>
       </div>
 
-      {/* Progress Indicator */}
-      <div className="container mx-auto px-6 mt-16 flex items-center gap-4">
-        <div className="h-[2px] flex-1 bg-white/5 rounded-full overflow-hidden">
+      <div className="container mx-auto px-6 mt-24 flex items-center gap-6">
+        <div className="h-[3px] flex-1 bg-white/5 rounded-full overflow-hidden shadow-inner">
           <div 
-            className="h-full bg-primary transition-all duration-1000 ease-expo"
+            className="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-1000 ease-expo shadow-[0_0_10px_rgba(59,130,246,0.5)]"
             style={{ width: `${((currentIndex + 1) / PROJECTS.length) * 100}%` }}
           />
         </div>
-        <span className="text-xs font-bold font-mono tracking-tighter opacity-50">
+        <span className="text-sm font-black font-mono tracking-tighter opacity-40 text-white">
           0{currentIndex + 1} / 0{PROJECTS.length}
         </span>
       </div>
