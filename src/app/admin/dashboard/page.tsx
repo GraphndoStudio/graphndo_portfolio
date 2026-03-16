@@ -22,10 +22,13 @@ import {
   ChevronRight,
   Award,
   Globe,
-  Share2
+  Share2,
+  Eye,
+  EyeOff
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
@@ -42,6 +45,24 @@ const TABS = [
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("hero");
+  
+  // Local state for visibility toggles (Prototype only)
+  const [visibility, setVisibility] = useState({
+    hero: true,
+    about: true,
+    skills: true,
+    projects: true,
+    gallery: true,
+    journey: true,
+    credentials: true,
+    platforms: true,
+    cta: true,
+    contact: true
+  });
+
+  const toggleVisibility = (section: keyof typeof visibility) => {
+    setVisibility(prev => ({ ...prev, [section]: !prev[section] }));
+  };
 
   return (
     <div className="min-h-screen bg-[#030305] text-white flex selection:bg-primary/30 antialiased font-body">
@@ -129,6 +150,30 @@ export default function AdminDashboard() {
             transition={{ duration: 0.3 }}
             className="max-w-4xl"
           >
+            {/* Section Visibility Header Toggle (Added for quick access) */}
+            {activeTab !== "settings" && (
+              <div className="mb-8 flex items-center justify-between p-6 glass-card border-primary/20 bg-primary/5">
+                <div className="flex items-center gap-4">
+                  <div className={cn("p-2 rounded-lg", visibility[activeTab as keyof typeof visibility] ? "bg-primary/20 text-primary" : "bg-white/5 text-white/20")}>
+                    {visibility[activeTab as keyof typeof visibility] ? <Eye size={18} /> : <EyeOff size={18} />}
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-black uppercase tracking-widest">Module Status</h4>
+                    <p className="text-[10px] text-white/40 uppercase tracking-tighter">Toggle visibility on the public portfolio</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-white/20">
+                    {visibility[activeTab as keyof typeof visibility] ? "Active" : "Hidden"}
+                  </span>
+                  <Switch 
+                    checked={visibility[activeTab as keyof typeof visibility]} 
+                    onCheckedChange={() => toggleVisibility(activeTab as keyof typeof visibility)}
+                  />
+                </div>
+              </div>
+            )}
+
             {activeTab === "hero" && (
               <div className="glass-card p-10 space-y-10 border-white/5">
                 <div className="grid grid-cols-2 gap-8">
@@ -278,49 +323,104 @@ export default function AdminDashboard() {
               </div>
             )}
 
+            {activeTab === "credentials" && (
+              <div className="space-y-6">
+                {[
+                  { title: "Web Dev Internship", issuer: "Skypark IT Tech", year: "2024" },
+                  { title: "Google UX Design", issuer: "Coursera", year: "2023" }
+                ].map((cert, i) => (
+                   <div key={i} className="glass-card p-8 border-white/5 flex gap-8 items-center">
+                    <div className="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center shrink-0 border border-secondary/20 text-secondary">
+                      <Award size={28} />
+                    </div>
+                    <div className="flex-1 grid grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <label className="text-[8px] font-black text-white/20 uppercase tracking-widest">Certificate Title</label>
+                        <Input defaultValue={cert.title} className="bg-white/5 border-white/10 h-10 px-4 rounded-lg text-xs font-bold" />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[8px] font-black text-white/20 uppercase tracking-widest">Issuing Body</label>
+                        <Input defaultValue={cert.issuer} className="bg-white/5 border-white/10 h-10 px-4 rounded-lg text-xs" />
+                      </div>
+                    </div>
+                    <button className="p-2 text-white/10 hover:text-red-400 transition-colors bg-white/5 rounded-lg">
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                ))}
+                <button className="w-full py-8 border border-dashed border-white/10 rounded-2xl text-white/20 text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-white/[0.02] hover:border-white/30 transition-all">
+                  <Plus size={16} /> Add Credential Node
+                </button>
+              </div>
+            )}
+
             {activeTab === "settings" && (
-              <div className="glass-card p-10 space-y-12 border-white/5">
-                <div className="space-y-6">
+              <div className="space-y-12">
+                {/* Module Visibility Protocols */}
+                <div className="glass-card p-10 border-white/5 space-y-8">
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Core Contact Node</h3>
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Module Visibility Protocols</h3>
                   </div>
-                  <div className="grid grid-cols-2 gap-8">
-                    <div className="space-y-2">
-                      <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">Official Email</label>
-                      <Input defaultValue="hello@sharukh.design" className="bg-white/5 border-white/10 h-12 px-5 rounded-xl text-sm" />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">Secure Line</label>
-                      <Input defaultValue="+91 98765 43210" className="bg-white/5 border-white/10 h-12 px-5 rounded-xl text-sm" />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">Geographic Anchor (Location)</label>
-                    <Input defaultValue="Nilgiris, Tamil Nadu, India" className="bg-white/5 border-white/10 h-12 px-5 rounded-xl text-sm" />
+                  <div className="grid grid-cols-2 gap-x-12 gap-y-6">
+                    {Object.entries(visibility).map(([module, isVisible]) => (
+                      <div key={module} className="flex items-center justify-between py-2 border-b border-white/5">
+                        <div className="flex items-center gap-3">
+                          <div className={cn("w-2 h-2 rounded-full", isVisible ? "bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]" : "bg-white/10")} />
+                          <span className="text-[10px] font-black uppercase tracking-widest text-white/60">{module} module</span>
+                        </div>
+                        <Switch 
+                          checked={isVisible} 
+                          onCheckedChange={() => toggleVisibility(module as keyof typeof visibility)} 
+                        />
+                      </div>
+                    ))}
                   </div>
                 </div>
 
-                <div className="space-y-6 pt-8 border-t border-white/5">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-1.5 h-1.5 rounded-full bg-secondary" />
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-secondary">Global Mission Platforms</h3>
-                  </div>
-                  <div className="grid grid-cols-2 gap-8">
-                    {[
-                      { name: "Fiverr", icon: Globe, url: "fiverr.com/sharukh" },
-                      { name: "LinkedIn", icon: Share2, url: "linkedin.com/in/sharukh" },
-                      { name: "Instagram", icon: ImageIcon, url: "instagram.com/sharukh" },
-                      { name: "Twitter", icon: Share2, url: "twitter.com/sharukh" }
-                    ].map((platform) => (
-                      <div key={platform.name} className="space-y-2">
-                        <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">{platform.name} Protocol</label>
-                        <div className="relative">
-                           <platform.icon size={12} className="absolute left-5 top-1/2 -translate-y-1/2 text-white/20" />
-                           <Input defaultValue={platform.url} className="bg-white/5 border-white/10 h-12 pl-12 pr-5 rounded-xl w-full text-xs" />
-                        </div>
+                <div className="glass-card p-10 border-white/5 space-y-12">
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                      <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Core Contact Node</h3>
+                    </div>
+                    <div className="grid grid-cols-2 gap-8">
+                      <div className="space-y-2">
+                        <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">Official Email</label>
+                        <Input defaultValue="hello@sharukh.design" className="bg-white/5 border-white/10 h-12 px-5 rounded-xl text-sm" />
                       </div>
-                    ))}
+                      <div className="space-y-2">
+                        <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">Secure Line</label>
+                        <Input defaultValue="+91 98765 43210" className="bg-white/5 border-white/10 h-12 px-5 rounded-xl text-sm" />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">Geographic Anchor (Location)</label>
+                      <Input defaultValue="Nilgiris, Tamil Nadu, India" className="bg-white/5 border-white/10 h-12 px-5 rounded-xl text-sm" />
+                    </div>
+                  </div>
+
+                  <div className="space-y-6 pt-8 border-t border-white/5">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-1.5 h-1.5 rounded-full bg-secondary" />
+                      <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-secondary">Global Mission Platforms</h3>
+                    </div>
+                    <div className="grid grid-cols-2 gap-8">
+                      {[
+                        { name: "Fiverr", icon: Globe, url: "fiverr.com/sharukh" },
+                        { name: "LinkedIn", icon: Share2, url: "linkedin.com/in/sharukh" },
+                        { name: "Instagram", icon: ImageIcon, url: "instagram.com/sharukh" },
+                        { name: "Twitter", icon: Share2, url: "twitter.com/sharukh" }
+                      ].map((platform) => (
+                        <div key={platform.name} className="space-y-2">
+                          <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">{platform.name} Protocol</label>
+                          <div className="relative">
+                            <platform.icon size={12} className="absolute left-5 top-1/2 -translate-y-1/2 text-white/20" />
+                            <Input defaultValue={platform.url} className="bg-white/5 border-white/10 h-12 pl-12 pr-5 rounded-xl w-full text-xs" />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
