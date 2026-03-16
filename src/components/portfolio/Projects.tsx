@@ -54,7 +54,7 @@ export default function Projects() {
     setCurrentIndex(newIndex);
 
     // Dynamic sizing calculation
-    const isMobile = window.innerWidth < 768;
+    const isMobile = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
     const cardWidth = isMobile ? window.innerWidth * 0.85 : 600;
     const gap = isMobile ? 40 : 80;
     const moveX = -newIndex * (cardWidth + gap);
@@ -120,7 +120,7 @@ export default function Projects() {
                     alt={project.title}
                     fill
                     priority={idx === 0}
-                    sizes="100vw"
+                    sizes="(max-width: 768px) 85vw, 600px"
                     className="object-cover transition-transform duration-1000 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center gap-8 backdrop-blur-sm">
