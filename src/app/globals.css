@@ -33,79 +33,58 @@
     @apply border-border;
   }
   body {
-    @apply bg-[#0B0B0F] text-foreground selection:bg-primary/30 selection:text-white overflow-x-hidden;
+    @apply bg-[#030305] text-foreground selection:bg-primary/30 selection:text-white overflow-x-hidden;
     font-variant-ligatures: none;
+    font-weight: 500; /* Increased weight for legibility */
   }
 }
 
 @layer components {
   .glass {
-    @apply backdrop-blur-xl bg-white/5 border border-white/10 shadow-2xl;
+    @apply backdrop-blur-2xl bg-white/[0.03] border border-white/[0.08] shadow-2xl;
   }
   
   .glass-card {
-    @apply glass rounded-2xl transition-all duration-300;
-  }
-
-  .text-reveal {
-    overflow: hidden;
-    white-space: nowrap;
+    @apply glass rounded-3xl transition-all duration-500;
   }
 
   .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6];
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#60A5FA] via-[#A855F7] to-[#EC4899];
   }
 
-  .glow-border {
-    position: relative;
-  }
-  
-  .glow-border::before {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    background: linear-gradient(45deg, #3B82F6, #8B5CF6);
-    border-radius: inherit;
-    z-index: -1;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+  .char-mask {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
   }
 
-  .glow-border:hover::before {
-    opacity: 0.5;
+  .section-wrap {
+    @apply relative z-10;
+  }
+
+  .editorial-year {
+    @apply absolute text-[20vw] font-bold text-white/[0.03] select-none pointer-events-none -z-10 tracking-tighter leading-none;
   }
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0B0B0F;
+  background: #030305;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
 }
 
-.lenis.lenis-smooth {
-  height: auto;
-}
-
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
-
-.lenis.lenis-scrolling iframe {
-  pointer-events: none;
+canvas {
+  touch-action: none;
 }

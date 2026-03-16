@@ -1,10 +1,9 @@
 
 "use client";
 
-import { motion } from "framer-motion";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -18,93 +17,83 @@ export default function About() {
   useEffect(() => {
     if (!containerRef.current) return;
 
-    gsap.from(".about-content > *", {
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: "top 80%",
-      },
-      y: 50,
-      opacity: 0,
-      stagger: 0.2,
-      duration: 1,
-      ease: "power3.out"
-    });
+    const ctx = gsap.context(() => {
+      // Staggered Entrance logic
+      gsap.from(".section-wrap", {
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 85%",
+          toggleActions: "play none none none"
+        },
+        y: 100,
+        opacity: 0,
+        duration: 1.5,
+        ease: "power4.out"
+      });
+
+      // Line by Line Reveal
+      const lines = gsap.utils.toArray(".reveal-p");
+      lines.forEach((line: any) => {
+        gsap.from(line, {
+          scrollTrigger: {
+            trigger: line,
+            start: "top 90%",
+          },
+          y: 20,
+          opacity: 0,
+          duration: 1,
+          ease: "power2.out"
+        });
+      });
+    }, containerRef);
+
+    return () => ctx.revert();
   }, []);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!imgRef.current) return;
-    const { clientX, clientY, currentTarget } = e;
-    const { left, top, width, height } = currentTarget.getBoundingClientRect();
-    const x = (clientX - left) / width;
-    const y = (clientY - top) / height;
-    
-    const moveX = (x - 0.5) * 20;
-    const moveY = (y - 0.5) * -20;
-    
-    gsap.to(imgRef.current, {
-      rotateY: moveX,
-      rotateX: moveY,
-      duration: 0.5,
-      ease: "power2.out"
-    });
-  };
-
-  const handleMouseLeave = () => {
-    if (!imgRef.current) return;
-    gsap.to(imgRef.current, {
-      rotateY: 0,
-      rotateX: 0,
-      duration: 0.5,
-      ease: "power2.out"
-    });
-  };
-
   return (
-    <section id="about" ref={containerRef} className="py-32 relative overflow-hidden">
-      <div className="container mx-auto px-6 grid md:grid-cols-2 gap-20 items-center">
-        <div 
-          className="relative group perspective-1000"
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
-        >
-          <div ref={imgRef} className="relative aspect-square max-w-md mx-auto transform-style-3d">
-            <div className="absolute inset-0 bg-primary/20 blur-[60px] rounded-full scale-75 group-hover:scale-100 transition-transform duration-500" />
-            <div className="glass-card w-full h-full p-4 transform-style-3d border-white/20">
-              <div className="relative w-full h-full overflow-hidden rounded-xl">
+    <section id="about" ref={containerRef} className="py-40 relative">
+      <div className="container mx-auto px-6 section-wrap">
+        <div className="grid md:grid-cols-2 gap-24 items-center">
+          <div className="relative group">
+            <div ref={imgRef} className="relative aspect-[4/5] rounded-[2rem] overflow-hidden glass-card p-3">
+              <div className="relative w-full h-full rounded-[1.5rem] overflow-hidden">
                 <Image
                   src={profileImg.imageUrl}
                   alt="Sharukh H"
                   fill
-                  className="object-cover"
+                  className="object-cover grayscale hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100"
                   data-ai-hint={profileImg.imageHint}
                 />
               </div>
             </div>
-            {/* Floating elements */}
-            <div className="absolute -top-6 -right-6 glass-card p-4 translate-z-20">
-              <span className="text-2xl">💻</span>
-            </div>
-            <div className="absolute -bottom-6 -left-6 glass-card p-4 translate-z-30">
-              <span className="text-2xl">🎨</span>
-            </div>
+            {/* Floating Editorial Accents */}
+            <div className="absolute -top-10 -right-10 w-40 h-40 border border-white/10 rounded-full animate-spin-slow pointer-events-none" />
           </div>
-        </div>
 
-        <div className="about-content space-y-8">
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
-            I combine clean code with <span className="gradient-text">beautiful design</span>.
-          </h2>
-          <p className="text-xl text-muted-foreground leading-relaxed">
-            I am a Computer Science graduate passionate about creating modern web experiences and creative digital designs. My goal is to bridge the gap between complex engineering and human-centric design.
-          </p>
-          <div className="grid grid-cols-2 gap-8 pt-8">
-            <div>
-              <h4 className="text-3xl font-bold gradient-text">2+</h4>
-              <p className="text-sm text-muted-foreground uppercase tracking-widest">Years Experience</p>
+          <div className="space-y-10">
+            <h2 className="text-5xl md:text-7xl font-bold tracking-tighter leading-none reveal-p">
+              Clean Code Meets <br />
+              <span className="gradient-text">Emotional Design.</span>
+            </h2>
+            
+            <div className="space-y-6 text-xl text-white/70 leading-relaxed font-medium">
+              <p className="reveal-p">
+                I am a creative architect specializing in frontend technologies. My journey is defined by a relentless pursuit of pixel perfection and fluid user experiences.
+              </p>
+              <p className="reveal-p">
+                Every project is a story told through interaction, motion, and structure. I don't just build websites; I craft digital legacies that resonate with users.
+              </p>
             </div>
-            <div>
-              <h4 className="text-3xl font-bold gradient-text">50+</h4>
-              <p className="text-sm text-muted-foreground uppercase tracking-widest">Projects Done</p>
+
+            <div className="grid grid-cols-2 gap-12 pt-10 reveal-p">
+              <div className="space-y-2 border-l-2 border-primary/30 pl-6">
+                <h4 className="text-4xl font-bold">2+</h4>
+                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Years of Vision</p>
+              </div>
+              <div className="space-y-2 border-l-2 border-secondary/30 pl-6">
+                <h4 className="text-4xl font-bold">50+</h4>
+                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Digital Artifacts</p>
+              </div>
             </div>
           </div>
         </div>

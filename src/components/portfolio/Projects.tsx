@@ -1,111 +1,126 @@
 
 "use client";
 
-import { motion } from "framer-motion";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { ExternalLink, Github } from "lucide-react";
+import { ExternalLink, Github, ArrowRight } from "lucide-react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const PROJECTS = [
   {
     id: "lane-detection",
-    title: "Lane Detection System",
-    type: "AI / ML Project",
-    desc: "An intelligent computer vision system developed to detect and track road lanes in real-time, enhancing autonomous vehicle safety.",
+    title: "Lane Detection AI",
+    type: "Machine Learning",
     img: PlaceHolderImages.find(i => i.id === 'lane-detection')?.imageUrl,
-    tags: ["Python", "OpenCV", "TensorFlow"],
-    link: "#"
+    tags: ["OpenCV", "Python"],
   },
   {
     id: "pos-system",
-    title: "POS System Design",
-    type: "Web Application",
-    desc: "A comprehensive point-of-sale solution with inventory tracking, sales analytics, and multi-terminal sync capabilities.",
+    title: "Enterprise POS",
+    type: "Web Engine",
     img: PlaceHolderImages.find(i => i.id === 'pos-system')?.imageUrl,
-    tags: ["React", "Node.js", "Firebase"],
-    link: "#"
+    tags: ["React", "Firebase"],
   },
   {
     id: "social-designs",
-    title: "Brand Identity Concepts",
-    type: "Graphic Design",
-    desc: "A series of high-impact social media assets and marketing materials designed to elevate digital brand presence.",
+    title: "Visual Branding",
+    type: "Creative Design",
     img: PlaceHolderImages.find(i => i.id === 'social-design-1')?.imageUrl,
-    tags: ["Photoshop", "Illustrator", "Canva"],
-    link: "#"
+    tags: ["Adobe CC", "GSAP"],
+  },
+  {
+    id: "next-gen-ui",
+    title: "Synapse Studio",
+    type: "Future Web",
+    img: PlaceHolderImages.find(i => i.id === 'hero-bg')?.imageUrl,
+    tags: ["Three.js", "Next.js"],
   }
 ];
 
 export default function Projects() {
-  return (
-    <section id="projects" className="py-32 bg-[#0B0B0F]/50">
-      <div className="container mx-auto px-6">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
-          <div>
-            <h2 className="text-4xl md:text-6xl font-bold mb-4">Featured <span className="gradient-text">Work</span></h2>
-            <p className="text-muted-foreground text-lg max-w-xl">
-              Exploring the intersection of code and design through innovative digital solutions.
-            </p>
-          </div>
-          <button className="px-8 py-3 rounded-full glass border border-white/10 hover:bg-white/5 transition-all hidden md:block interactive">
-            View All Projects
-          </button>
-        </div>
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLDivElement>(null);
 
-        <div className="grid gap-20">
-          {PROJECTS.map((project, idx) => (
-            <motion.div
-              key={project.id}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className={`flex flex-col ${idx % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} gap-12 items-center`}
-            >
-              <div className="flex-1 w-full group">
-                <div className="relative aspect-video rounded-3xl overflow-hidden glass-card p-3">
-                  <div className="relative w-full h-full overflow-hidden rounded-2xl">
-                    <Image
-                      src={project.img || ''}
-                      alt={project.title}
-                      fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
-                       <button className="w-12 h-12 rounded-full glass flex items-center justify-center hover:scale-110 transition-transform">
-                        <ExternalLink size={20} />
-                       </button>
-                       <button className="w-12 h-12 rounded-full glass flex items-center justify-center hover:scale-110 transition-transform">
-                        <Github size={20} />
-                       </button>
-                    </div>
+  useEffect(() => {
+    if (!sectionRef.current || !triggerRef.current) return;
+
+    const ctx = gsap.context(() => {
+      const totalWidth = sectionRef.current?.scrollWidth || 0;
+      const windowWidth = window.innerWidth;
+
+      gsap.to(sectionRef.current, {
+        x: -(totalWidth - windowWidth),
+        ease: "none",
+        scrollTrigger: {
+          trigger: triggerRef.current,
+          pin: true,
+          scrub: 1,
+          end: () => `+=${totalWidth}`,
+          anticipatePin: 1,
+        },
+      });
+    }, triggerRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <div ref={triggerRef} className="overflow-hidden bg-[#030305]">
+      <div className="h-screen flex items-center">
+        <div className="px-12 flex-shrink-0 w-screen">
+          <h2 className="text-[10vw] font-bold tracking-tighter leading-none opacity-20">LOCKED<br/>WORKS</h2>
+          <div className="mt-8 flex items-center gap-4 text-primary font-bold uppercase tracking-widest text-sm">
+            Scroll to Navigate <ArrowRight size={20} className="animate-bounce-x" />
+          </div>
+        </div>
+        
+        <div ref={sectionRef} className="flex gap-20 px-24 items-center h-full">
+          {PROJECTS.map((project) => (
+            <div key={project.id} className="w-[80vw] md:w-[600px] flex-shrink-0">
+              <div className="group relative glass-card p-6 overflow-hidden">
+                <div className="relative aspect-video rounded-2xl overflow-hidden mb-8">
+                  <Image
+                    src={project.img || ''}
+                    alt={project.title}
+                    fill
+                    className="object-cover transition-transform duration-1000 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center gap-6">
+                    <button className="w-14 h-14 rounded-full glass flex items-center justify-center hover:scale-110 transition-transform">
+                      <ExternalLink size={24} />
+                    </button>
+                    <button className="w-14 h-14 rounded-full glass flex items-center justify-center hover:scale-110 transition-transform">
+                      <Github size={24} />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <span className="text-primary font-bold text-xs tracking-widest uppercase">{project.type}</span>
+                  <h3 className="text-4xl font-bold tracking-tight">{project.title}</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {project.tags.map(tag => (
+                      <span key={tag} className="px-4 py-1 bg-white/5 rounded-full text-[10px] font-bold border border-white/5">
+                        {tag}
+                      </span>
+                    ))}
                   </div>
                 </div>
               </div>
-
-              <div className="flex-1 space-y-6">
-                <span className="text-primary font-mono text-sm tracking-widest uppercase">{project.type}</span>
-                <h3 className="text-3xl md:text-4xl font-bold">{project.title}</h3>
-                <p className="text-lg text-muted-foreground leading-relaxed">
-                  {project.desc}
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  {project.tags.map(tag => (
-                    <span key={tag} className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-medium">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                <div className="pt-4">
-                  <button className="flex items-center gap-2 text-primary font-bold hover:gap-4 transition-all group interactive">
-                    Explore Project Details
-                    <div className="w-8 h-px bg-primary transform group-hover:w-12 transition-all" />
-                  </button>
-                </div>
-              </div>
-            </motion.div>
+            </div>
           ))}
+          
+          <div className="w-[50vw] flex-shrink-0 flex items-center justify-center">
+            <button className="text-[5vw] font-bold hover:text-primary transition-colors hover:scale-110 transform duration-500">
+              VIEW ALL →
+            </button>
+          </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }

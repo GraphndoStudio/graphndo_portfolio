@@ -1,52 +1,86 @@
 
 "use client";
 
-import { motion } from "framer-motion";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const STEPS = [
-  { year: "2023", title: "Started Graphic Design", desc: "Begun my journey in visual storytelling, mastering Photoshop and core design principles." },
-  { year: "2024", title: "Computer Science Studies", desc: "Dived deep into algorithms, data structures, and the fundamentals of software engineering." },
-  { year: "2025", title: "Web Development Internship", desc: "Hands-on experience building real-world applications at Skypark IT Tech." },
-  { year: "2026", title: "Frontend Developer & Freelancer", desc: "Currently shaping digital experiences for clients worldwide with cutting-edge tech." },
+  { year: "2023", title: "Visual Genesis", desc: "Mastering the physics of pixels and the geometry of layout through core design studies." },
+  { year: "2024", title: "Logic Architecture", desc: "Developing deep structural understanding of algorithmic efficiency and software patterns." },
+  { year: "2025", title: "Industry Immersion", desc: "Scaling digital ecosystems at Skypark IT Tech, bridging engineering and human emotion." },
+  { year: "2026", title: "Creative Agency", desc: "Currently architecting modern web experiences for a global roster of visionary clients." },
 ];
 
 export default function Timeline() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const ctx = gsap.context(() => {
+      const items = gsap.utils.toArray(".timeline-item");
+      
+      items.forEach((item: any, i: number) => {
+        const year = item.querySelector(".editorial-year");
+        const content = item.querySelector(".timeline-content");
+
+        gsap.from(year, {
+          scrollTrigger: {
+            trigger: item,
+            start: "top 80%",
+          },
+          x: -100,
+          opacity: 0,
+          duration: 1.5,
+          ease: "power4.out"
+        });
+
+        gsap.from(content, {
+          scrollTrigger: {
+            trigger: item,
+            start: "top 70%",
+          },
+          y: 50,
+          opacity: 0,
+          duration: 1.2,
+          ease: "power3.out"
+        });
+      });
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section id="journey" className="py-32 relative">
+    <section id="journey" ref={containerRef} className="py-60 relative overflow-hidden">
       <div className="container mx-auto px-6">
-        <h2 className="text-4xl md:text-6xl font-bold mb-20 text-center">My Professional <span className="gradient-text">Journey</span></h2>
+        <h2 className="text-6xl md:text-9xl font-bold mb-40 tracking-tighter text-center">
+          The <span className="gradient-text">Odyssey</span>
+        </h2>
         
-        <div className="max-w-4xl mx-auto relative">
-          {/* Central Line */}
-          <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-primary via-secondary to-transparent" />
-
-          <div className="space-y-24">
-            {STEPS.map((step, idx) => (
-              <motion.div
-                key={step.year}
-                initial={{ opacity: 0, x: idx % 2 === 0 ? -50 : 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: idx * 0.1 }}
-                className={`relative flex items-center gap-12 ${idx % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
-              >
-                {/* Content */}
-                <div className="flex-1">
-                  <div className={`glass-card p-8 group hover:bg-white/10 transition-colors ${idx % 2 === 0 ? 'text-right' : 'text-left'}`}>
-                    <span className="text-3xl font-bold gradient-text mb-2 block">{step.year}</span>
-                    <h3 className="text-xl font-bold mb-4">{step.title}</h3>
-                    <p className="text-muted-foreground leading-relaxed">{step.desc}</p>
-                  </div>
+        <div className="max-w-5xl mx-auto space-y-60">
+          {STEPS.map((step, idx) => (
+            <div key={step.year} className="timeline-item relative">
+              <span className={`editorial-year ${idx % 2 === 0 ? '-left-10' : '-right-10'}`}>
+                {step.year}
+              </span>
+              
+              <div className={`flex ${idx % 2 === 0 ? 'justify-end' : 'justify-start'}`}>
+                <div className="timeline-content max-w-xl glass-card p-12 relative z-10 backdrop-blur-3xl">
+                  <span className="text-primary font-bold text-xs tracking-[0.4em] uppercase mb-6 block">
+                    Milestone 0{idx + 1}
+                  </span>
+                  <h3 className="text-4xl md:text-5xl font-bold mb-8 tracking-tight">{step.title}</h3>
+                  <p className="text-xl text-white/60 leading-relaxed font-medium">
+                    {step.desc}
+                  </p>
                 </div>
-
-                {/* Dot */}
-                <div className="absolute left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-primary shadow-[0_0_20px_rgba(59,130,246,0.8)] z-10" />
-
-                {/* Spacer */}
-                <div className="flex-1 hidden md:block" />
-              </motion.div>
-            ))}
-          </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
