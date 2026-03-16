@@ -35,6 +35,30 @@
       "description": "Social Media Graphic Design",
       "imageUrl": "https://picsum.photos/seed/social2/400/500",
       "imageHint": "marketing design"
+    },
+    {
+      "id": "poster-1",
+      "description": "Creative Poster Design",
+      "imageUrl": "https://picsum.photos/seed/poster1/600/900",
+      "imageHint": "poster design"
+    },
+    {
+      "id": "poster-2",
+      "description": "Event Poster Design",
+      "imageUrl": "https://picsum.photos/seed/poster2/600/800",
+      "imageHint": "creative poster"
+    },
+    {
+      "id": "cert-1",
+      "description": "Web Dev Internship Certificate",
+      "imageUrl": "https://picsum.photos/seed/cert1/800/600",
+      "imageHint": "certificate document"
+    },
+    {
+      "id": "cert-2",
+      "description": "Advanced UI/UX Certification",
+      "imageUrl": "https://picsum.photos/seed/cert2/800/600",
+      "imageHint": "award certificate"
     }
   ]
 }

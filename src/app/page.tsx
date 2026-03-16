@@ -8,7 +8,10 @@ import Hero from "@/components/portfolio/Hero";
 import About from "@/components/portfolio/About";
 import Skills from "@/components/portfolio/Skills";
 import Projects from "@/components/portfolio/Projects";
+import DesignGallery from "@/components/portfolio/DesignGallery";
 import Timeline from "@/components/portfolio/Timeline";
+import Certificates from "@/components/portfolio/Certificates";
+import Platforms from "@/components/portfolio/Platforms";
 import CTA from "@/components/portfolio/CTA";
 import Contact from "@/components/portfolio/Contact";
 import Footer from "@/components/portfolio/Footer";
@@ -67,7 +70,10 @@ export default function Home() {
           <About />
           <Skills />
           <Projects />
+          <DesignGallery />
           <Timeline />
+          <Certificates />
+          <Platforms />
           <CTA />
           <Contact />
           <Footer />
