@@ -25,10 +25,7 @@ export default function LiquidBackground() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    // High density geometry for smooth liquid ripples
     const geometry = new THREE.IcosahedronGeometry(2.5, 128);
-    
-    // Glass-Liquid Material with refined physics properties
     const material = new THREE.MeshPhysicalMaterial({
       color: 0x1e3a8a,
       emissive: 0x0f172a,
@@ -46,7 +43,6 @@ export default function LiquidBackground() {
     const mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);
 
-    // Dynamic Lighting System
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
     scene.add(ambientLight);
 
@@ -60,7 +56,6 @@ export default function LiquidBackground() {
 
     camera.position.z = 6;
 
-    // Smooth Lerp Mouse Tracking
     const mouse = { x: 0, y: 0 };
     const lerpedMouse = { x: 0, y: 0 };
     
@@ -72,16 +67,14 @@ export default function LiquidBackground() {
 
     const initialPositions = geometry.attributes.position.array.slice();
 
-    // High-Frequency Animation Loop
     let time = 0;
     const animate = () => {
+      if (!canvasRef.current) return;
       time += 0.004;
       
-      // Increased lerp dampening for smoother following
       lerpedMouse.x += (mouse.x - lerpedMouse.x) * 0.03;
       lerpedMouse.y += (mouse.y - lerpedMouse.y) * 0.03;
 
-      // Organic Displacement Logic - Complex Noise Simulation
       const positions = geometry.attributes.position.array;
       for (let i = 0; i < positions.length; i += 3) {
         const x = initialPositions[i];
@@ -99,7 +92,6 @@ export default function LiquidBackground() {
       }
       geometry.attributes.position.needsUpdate = true;
 
-      // Dynamic Parallax Interaction
       mesh.rotation.y = time * 0.08 + lerpedMouse.x * 0.3;
       mesh.rotation.x = time * 0.04 + lerpedMouse.y * 0.2;
       
@@ -112,12 +104,12 @@ export default function LiquidBackground() {
 
     animate();
 
-    // Smoother Scroll Interactions
-    ScrollTrigger.create({
+    const scrollTrigger = ScrollTrigger.create({
       trigger: "body",
       start: "top top",
       end: "bottom bottom",
       onUpdate: (self) => {
+        if (!canvasRef.current) return;
         const blurValue = self.progress * 25;
         const scaleValue = 1 + (self.progress * 0.3);
         const opacityValue = 1 - (self.progress * 0.5);
@@ -126,7 +118,7 @@ export default function LiquidBackground() {
           filter: `blur(${blurValue}px)`,
           opacity: opacityValue,
           scale: scaleValue,
-          duration: 1.2, // Slowed down for grace
+          duration: 1.2,
           ease: "expo.out"
         });
       }
@@ -142,6 +134,7 @@ export default function LiquidBackground() {
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("resize", handleResize);
+      scrollTrigger.kill();
       renderer.dispose();
       geometry.dispose();
       material.dispose();

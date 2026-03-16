@@ -15,33 +15,40 @@ export default function Hero() {
     if (!containerRef.current || !nameRef.current) return;
     
     const nameText = "SHARUKH H";
+    // Inject spans for character animation
     nameRef.current.innerHTML = nameText.split("").map(char => 
       `<span class="char-mask"><span class="char-inner" style="display:inline-block">${char === " " ? "&nbsp;" : char}</span></span>`
     ).join("");
 
     const ctx = gsap.context(() => {
-      // Cinematic Entrance Animation
-      gsap.from(".char-inner", {
-        y: "110%",
-        rotate: 8,
-        opacity: 0,
-        stagger: 0.04,
-        duration: 2.2,
-        ease: "expo.out",
-        delay: 0.3
-      });
+      const charInners = nameRef.current?.querySelectorAll(".char-inner");
+      const staggers = containerRef.current?.querySelectorAll(".hero-content-stagger");
 
-      gsap.from(".hero-content-stagger", {
-        y: 60,
-        opacity: 0,
-        stagger: 0.15,
-        duration: 1.8,
-        ease: "power4.out",
-        delay: 1.2
-      });
+      if (charInners && charInners.length > 0) {
+        gsap.from(charInners, {
+          y: "110%",
+          rotate: 8,
+          opacity: 0,
+          stagger: 0.04,
+          duration: 2.2,
+          ease: "expo.out",
+          delay: 0.3
+        });
+      }
 
-      // Smooth Parallax for the text group with lerping handled via GSAP
+      if (staggers && staggers.length > 0) {
+        gsap.from(staggers, {
+          y: 60,
+          opacity: 0,
+          stagger: 0.15,
+          duration: 1.8,
+          ease: "power4.out",
+          delay: 1.2
+        });
+      }
+
       const handleMouseMove = (e: MouseEvent) => {
+        if (!contentRef.current) return;
         const { clientX, clientY } = e;
         const xPos = (clientX / window.innerWidth - 0.5) * 50;
         const yPos = (clientY / window.innerHeight - 0.5) * 50;
@@ -94,7 +101,6 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Editorial Year Anchor - Subtle Breath */}
       <motion.div 
         animate={{ opacity: [0.015, 0.03, 0.015] }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
