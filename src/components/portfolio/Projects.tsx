@@ -120,6 +120,7 @@ export default function Projects() {
                     alt={project.title}
                     fill
                     priority={idx === 0}
+                    sizes="100vw"
                     className="object-cover transition-transform duration-1000 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center gap-8 backdrop-blur-sm">

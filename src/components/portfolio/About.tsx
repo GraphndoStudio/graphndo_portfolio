@@ -61,6 +61,7 @@ export default function About() {
                   alt="Sharukh H"
                   fill
                   priority
+                  sizes="100vw"
                   className="object-cover grayscale hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100"
                   data-ai-hint={profileImg.imageHint}
                 />
