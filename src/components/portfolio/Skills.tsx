@@ -26,17 +26,22 @@ export default function Skills() {
   useEffect(() => {
     if (!containerRef.current) return;
 
-    gsap.from(".skill-card", {
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: "top 70%",
-      },
-      y: 50,
-      opacity: 0,
-      stagger: 0.1,
-      duration: 0.8,
-      ease: "power3.out"
-    });
+    const ctx = gsap.context(() => {
+      gsap.from(".skill-card", {
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 85%",
+          toggleActions: "play none none none",
+        },
+        y: 40,
+        opacity: 0,
+        stagger: 0.1,
+        duration: 1,
+        ease: "power3.out"
+      });
+    }, containerRef);
+
+    return () => ctx.revert();
   }, []);
 
   return (
@@ -44,7 +49,7 @@ export default function Skills() {
       <div className="container mx-auto px-6">
         <div className="text-center mb-20">
           <h2 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">Technical <span className="gradient-text">Mastery</span></h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
+          <p className="text-muted-foreground max-w-2xl mx-auto text-lg font-medium">
             My versatile toolkit allows me to handle everything from complex frontend logic to pixel-perfect visual branding.
           </p>
         </div>
@@ -61,7 +66,7 @@ export default function Skills() {
               </div>
               
               <div className="relative z-10">
-                <div className="w-12 h-12 rounded-xl glass border-white/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 rounded-xl glass border border-white/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                   <skill.icon size={24} style={{ color: skill.color }} />
                 </div>
                 <h3 className="text-xl font-bold mb-4">{skill.name}</h3>
@@ -75,15 +80,16 @@ export default function Skills() {
                     <motion.div
                       initial={{ width: 0 }}
                       whileInView={{ width: `${skill.level}%` }}
-                      transition={{ duration: 1.5, delay: 0.2, ease: "circOut" }}
-                      className="h-full bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6]"
+                      viewport={{ once: true }}
+                      transition={{ duration: 1.5, delay: 0.5, ease: "circOut" }}
+                      className="h-full bg-gradient-to-r from-primary to-secondary"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Hover Glow Effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
             </motion.div>
           ))}
         </div>
