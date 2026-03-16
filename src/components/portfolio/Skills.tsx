@@ -2,12 +2,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Code2, Palette, Database, Figma, Terminal, Globe, Layout, Brush } from "lucide-react";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const SKILLS = [
   { name: "HTML5", level: 95, icon: Globe, color: "#E34F26" },
@@ -20,44 +15,63 @@ const SKILLS = [
   { name: "React / Next.js", level: 75, icon: Database, color: "#61DAFB" },
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 40, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.8,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
 export default function Skills() {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    const ctx = gsap.context(() => {
-      gsap.from(".skill-card", {
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top 85%",
-          toggleActions: "play none none none",
-        },
-        y: 40,
-        opacity: 0,
-        stagger: 0.1,
-        duration: 1,
-        ease: "power3.out"
-      });
-    }, containerRef);
-
-    return () => ctx.revert();
-  }, []);
-
   return (
-    <section id="skills" ref={containerRef} className="py-32 relative">
+    <section id="skills" className="py-32 relative">
       <div className="container mx-auto px-6">
         <div className="text-center mb-20">
-          <h2 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">Technical <span className="gradient-text">Mastery</span></h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto text-lg font-medium">
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-4xl md:text-6xl font-bold mb-6 tracking-tight"
+          >
+            Technical <span className="gradient-text">Mastery</span>
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-muted-foreground max-w-2xl mx-auto text-lg font-medium"
+          >
             My versatile toolkit allows me to handle everything from complex frontend logic to pixel-perfect visual branding.
-          </p>
+          </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+        >
           {SKILLS.map((skill) => (
             <motion.div
               key={skill.name}
+              variants={itemVariants}
               whileHover={{ y: -10 }}
               className="skill-card glass-card p-8 group relative overflow-hidden"
             >
@@ -69,7 +83,7 @@ export default function Skills() {
                 <div className="w-12 h-12 rounded-xl glass border border-white/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                   <skill.icon size={24} style={{ color: skill.color }} />
                 </div>
-                <h3 className="text-xl font-bold mb-4">{skill.name}</h3>
+                <h3 className="text-xl font-bold mb-4 text-white">{skill.name}</h3>
                 
                 <div className="space-y-2">
                   <div className="flex justify-between text-xs font-semibold text-muted-foreground uppercase tracking-wider">
@@ -92,7 +106,7 @@ export default function Skills() {
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
