@@ -20,37 +20,37 @@ export default function Hero() {
     ).join("");
 
     const ctx = gsap.context(() => {
-      // Entrance Animation
+      // Cinematic Entrance Animation
       gsap.from(".char-inner", {
-        y: 200,
-        rotate: 10,
+        y: "110%",
+        rotate: 8,
         opacity: 0,
-        stagger: 0.05,
-        duration: 1.8,
+        stagger: 0.04,
+        duration: 2.2,
         ease: "expo.out",
-        delay: 0.2
+        delay: 0.3
       });
 
       gsap.from(".hero-content-stagger", {
-        y: 40,
+        y: 60,
         opacity: 0,
-        stagger: 0.2,
-        duration: 1.5,
-        ease: "power3.out",
-        delay: 1
+        stagger: 0.15,
+        duration: 1.8,
+        ease: "power4.out",
+        delay: 1.2
       });
 
-      // Mouse Parallax for the text group
+      // Smooth Parallax for the text group with lerping handled via GSAP
       const handleMouseMove = (e: MouseEvent) => {
         const { clientX, clientY } = e;
-        const xPos = (clientX / window.innerWidth - 0.5) * 40;
-        const yPos = (clientY / window.innerHeight - 0.5) * 40;
+        const xPos = (clientX / window.innerWidth - 0.5) * 50;
+        const yPos = (clientY / window.innerHeight - 0.5) * 50;
 
         gsap.to(contentRef.current, {
           x: xPos,
           y: yPos,
-          duration: 1.5,
-          ease: "power2.out"
+          duration: 2,
+          ease: "power3.out"
         });
       };
 
@@ -94,14 +94,18 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Editorial Year Anchor */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-center pointer-events-none opacity-[0.02]">
-        <span className="text-[40vw] font-black leading-none">2024</span>
-      </div>
+      {/* Editorial Year Anchor - Subtle Breath */}
+      <motion.div 
+        animate={{ opacity: [0.015, 0.03, 0.015] }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-center pointer-events-none"
+      >
+        <span className="text-[40vw] font-black leading-none text-white">2024</span>
+      </motion.div>
 
       <motion.div
         animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
+        transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
         className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3 opacity-30"
       >
         <span className="text-[10px] font-black tracking-[0.3em] uppercase mb-2">Scroll</span>

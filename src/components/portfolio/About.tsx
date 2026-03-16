@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -17,32 +18,44 @@ export default function About() {
     if (!containerRef.current) return;
 
     const ctx = gsap.context(() => {
-      // Staggered Entrance logic
+      // Smooth Staggered Entrance
       gsap.from(".section-wrap", {
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top 85%",
           toggleActions: "play none none none"
         },
-        y: 100,
+        y: 120,
         opacity: 0,
-        duration: 1.5,
+        duration: 1.8,
         ease: "power4.out"
       });
 
-      // Line by Line Reveal
+      // Line by Line Reveal with sophisticated ease
       const lines = gsap.utils.toArray(".reveal-p");
       lines.forEach((line: any) => {
         gsap.from(line, {
           scrollTrigger: {
             trigger: line,
-            start: "top 90%",
+            start: "top 92%",
           },
-          y: 20,
+          y: 30,
           opacity: 0,
-          duration: 1,
-          ease: "power2.out"
+          duration: 1.4,
+          ease: "expo.out"
         });
+      });
+
+      // Image Parallax on Scroll
+      gsap.to(imgRef.current, {
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true
+        },
+        y: -50,
+        ease: "none"
       });
     }, containerRef);
 
@@ -54,30 +67,30 @@ export default function About() {
       <div className="container mx-auto px-6 section-wrap">
         <div className="grid md:grid-cols-2 gap-24 items-center">
           <div className="relative group">
-            <div ref={imgRef} className="relative aspect-[4/5] rounded-[2rem] overflow-hidden glass-card p-3">
-              <div className="relative w-full h-full rounded-[1.5rem] overflow-hidden">
+            <div ref={imgRef} className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden glass-card p-3 shadow-2xl">
+              <div className="relative w-full h-full rounded-[2rem] overflow-hidden">
                 <Image
                   src={profileImg.imageUrl}
                   alt="Sharukh H"
                   fill
                   priority
-                  sizes="100vw"
-                  className="object-cover grayscale hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover grayscale hover:grayscale-0 transition-all duration-1000 scale-110 group-hover:scale-100"
                   data-ai-hint={profileImg.imageHint}
                 />
               </div>
             </div>
             {/* Floating Editorial Accents */}
-            <div className="absolute -top-10 -right-10 w-40 h-40 border border-white/10 rounded-full animate-spin-slow pointer-events-none" />
+            <div className="absolute -top-10 -right-10 w-48 h-48 border border-white/10 rounded-full animate-spin-slow pointer-events-none opacity-20" />
           </div>
 
-          <div className="space-y-10">
+          <div className="space-y-12">
             <h2 className="text-5xl md:text-7xl font-bold tracking-tighter leading-none reveal-p">
               Clean Code Meets <br />
               <span className="gradient-text">Emotional Design.</span>
             </h2>
             
-            <div className="space-y-6 text-xl text-white/70 leading-relaxed font-medium">
+            <div className="space-y-8 text-xl text-white/70 leading-relaxed font-medium">
               <p className="reveal-p">
                 I am a creative architect specializing in frontend technologies. My journey is defined by a relentless pursuit of pixel perfection and fluid user experiences.
               </p>
@@ -87,13 +100,13 @@ export default function About() {
             </div>
 
             <div className="grid grid-cols-2 gap-12 pt-10 reveal-p">
-              <div className="space-y-2 border-l-2 border-primary/30 pl-6">
-                <h4 className="text-4xl font-bold">2+</h4>
-                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Years of Vision</p>
+              <div className="space-y-2 border-l-2 border-primary/30 pl-8">
+                <h4 className="text-5xl font-bold tracking-tighter">2+</h4>
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">Years of Vision</p>
               </div>
-              <div className="space-y-2 border-l-2 border-secondary/30 pl-6">
-                <h4 className="text-4xl font-bold">50+</h4>
-                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Digital Artifacts</p>
+              <div className="space-y-2 border-l-2 border-secondary/30 pl-8">
+                <h4 className="text-5xl font-bold tracking-tighter">50+</h4>
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">Digital Artifacts</p>
               </div>
             </div>
           </div>

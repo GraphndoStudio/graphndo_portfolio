@@ -28,43 +28,39 @@ export default function LiquidBackground() {
     // High density geometry for smooth liquid ripples
     const geometry = new THREE.IcosahedronGeometry(2.5, 128);
     
-    // Glass-Liquid Material
+    // Glass-Liquid Material with refined physics properties
     const material = new THREE.MeshPhysicalMaterial({
       color: 0x1e3a8a,
       emissive: 0x0f172a,
-      emissiveIntensity: 0.5,
-      metalness: 0.2,
-      roughness: 0.1,
-      transmission: 0.95,
-      thickness: 1.5,
-      ior: 1.45,
+      emissiveIntensity: 0.6,
+      metalness: 0.3,
+      roughness: 0.05,
+      transmission: 0.98,
+      thickness: 2.0,
+      ior: 1.5,
       clearcoat: 1.0,
-      clearcoatRoughness: 0.1,
-      reflectivity: 0.5,
+      clearcoatRoughness: 0.05,
+      reflectivity: 0.8,
     });
 
     const mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);
 
     // Dynamic Lighting System
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
     scene.add(ambientLight);
 
-    const pointLight1 = new THREE.PointLight(0x3b82f6, 80);
+    const pointLight1 = new THREE.PointLight(0x3b82f6, 100);
     pointLight1.position.set(5, 5, 5);
     scene.add(pointLight1);
 
-    const pointLight2 = new THREE.PointLight(0x8b5cf6, 60);
+    const pointLight2 = new THREE.PointLight(0x8b5cf6, 80);
     pointLight2.position.set(-5, -5, 2);
     scene.add(pointLight2);
 
-    const pointLight3 = new THREE.PointLight(0xec4899, 40);
-    pointLight3.position.set(0, 0, 8);
-    scene.add(pointLight3);
-
     camera.position.z = 6;
 
-    // Mouse Tracking Logic
+    // Smooth Lerp Mouse Tracking
     const mouse = { x: 0, y: 0 };
     const lerpedMouse = { x: 0, y: 0 };
     
@@ -76,24 +72,25 @@ export default function LiquidBackground() {
 
     const initialPositions = geometry.attributes.position.array.slice();
 
-    // Animation Loop
+    // High-Frequency Animation Loop
     let time = 0;
     const animate = () => {
-      time += 0.006;
+      time += 0.004;
       
-      lerpedMouse.x += (mouse.x - lerpedMouse.x) * 0.04;
-      lerpedMouse.y += (mouse.y - lerpedMouse.y) * 0.04;
+      // Increased lerp dampening for smoother following
+      lerpedMouse.x += (mouse.x - lerpedMouse.x) * 0.03;
+      lerpedMouse.y += (mouse.y - lerpedMouse.y) * 0.03;
 
-      // Organic Displacement Logic
+      // Organic Displacement Logic - Complex Noise Simulation
       const positions = geometry.attributes.position.array;
       for (let i = 0; i < positions.length; i += 3) {
         const x = initialPositions[i];
         const y = initialPositions[i + 1];
         const z = initialPositions[i + 2];
         
-        const noise = Math.sin(x * 1.2 + time) * 0.3;
-        const noise2 = Math.cos(y * 1.5 + time * 0.7) * 0.25;
-        const noise3 = Math.sin(z * 0.8 + time * 1.2) * 0.2;
+        const noise = Math.sin(x * 1.5 + time) * 0.2;
+        const noise2 = Math.cos(y * 1.8 + time * 0.8) * 0.2;
+        const noise3 = Math.sin(z * 1.2 + time * 1.1 + (lerpedMouse.x * 2)) * 0.15;
         
         const factor = 1 + noise + noise2 + noise3;
         positions[i] = x * factor;
@@ -102,12 +99,12 @@ export default function LiquidBackground() {
       }
       geometry.attributes.position.needsUpdate = true;
 
-      // Parallax interaction
-      mesh.rotation.y = time * 0.1 + lerpedMouse.x * 0.4;
-      mesh.rotation.x = time * 0.05 + lerpedMouse.y * 0.3;
+      // Dynamic Parallax Interaction
+      mesh.rotation.y = time * 0.08 + lerpedMouse.x * 0.3;
+      mesh.rotation.x = time * 0.04 + lerpedMouse.y * 0.2;
       
-      mesh.position.x = lerpedMouse.x * 1.2;
-      mesh.position.y = lerpedMouse.y * 1.2;
+      mesh.position.x = lerpedMouse.x * 0.8;
+      mesh.position.y = lerpedMouse.y * 0.8;
 
       renderer.render(scene, camera);
       requestAnimationFrame(animate);
@@ -115,22 +112,22 @@ export default function LiquidBackground() {
 
     animate();
 
-    // Dynamic Scroll Interaction (Blur & Scale)
+    // Smoother Scroll Interactions
     ScrollTrigger.create({
       trigger: "body",
       start: "top top",
       end: "bottom bottom",
       onUpdate: (self) => {
-        const blurValue = self.progress * 30;
-        const scaleValue = 1 + (self.progress * 0.5);
-        const opacityValue = 1 - (self.progress * 0.6);
+        const blurValue = self.progress * 25;
+        const scaleValue = 1 + (self.progress * 0.3);
+        const opacityValue = 1 - (self.progress * 0.5);
         
         gsap.to(canvasRef.current, {
           filter: `blur(${blurValue}px)`,
           opacity: opacityValue,
           scale: scaleValue,
-          duration: 0.8,
-          ease: "power2.out"
+          duration: 1.2, // Slowed down for grace
+          ease: "expo.out"
         });
       }
     });
