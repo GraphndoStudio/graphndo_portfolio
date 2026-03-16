@@ -48,10 +48,12 @@ export default function CustomCursor() {
         translateX: "-50%",
         translateY: "-50%",
       }}
+      initial={{ backgroundColor: "rgba(59, 130, 246, 0)" }}
       animate={{
         scale: isHovered ? 2 : 1,
-        backgroundColor: isHovered ? "rgba(59, 130, 246, 0.4)" : "transparent",
+        backgroundColor: isHovered ? "rgba(59, 130, 246, 0.4)" : "rgba(59, 130, 246, 0)",
       }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
     />
   );
 }
