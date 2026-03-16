@@ -1,3 +1,4 @@
+
 "use client";
 
 import { motion } from "framer-motion";
@@ -12,7 +13,7 @@ export default function Hero() {
   useEffect(() => {
     if (!containerRef.current || !nameRef.current) return;
     
-    const nameText = "Sharukh H";
+    const nameText = "SHARUKH H";
     nameRef.current.innerHTML = nameText.split("").map(char => 
       `<span class="char-mask"><span class="char-inner" style="display:inline-block">${char === " " ? "&nbsp;" : char}</span></span>`
     ).join("");
@@ -44,36 +45,21 @@ export default function Hero() {
   return (
     <section ref={containerRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <div className="relative z-10 w-full max-w-6xl px-6">
-        <div className="text-center space-y-10 hero-content">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1 }}
-          >
-            <span className="inline-block px-6 py-2.5 rounded-full bg-white/5 border border-white/10 text-xs font-black tracking-[0.4em] uppercase mb-8 text-primary shadow-xl">
-              Crafting Digital Legacies
-            </span>
-          </motion.div>
-
-          <h1 ref={nameRef} className="text-[14vw] md:text-[10vw] font-bold tracking-tighter leading-none mb-6 text-white">
-            Sharukh H
+        <div className="text-center space-y-12 hero-content">
+          <h1 ref={nameRef} className="text-[14vw] md:text-[12vw] font-bold tracking-tighter leading-none mb-4 text-white uppercase">
+            SHARUKH H
           </h1>
           
-          <h2 className="text-2xl md:text-5xl font-semibold text-white/95">
-            Frontend Architect & <span className="gradient-text">Visual Storyteller</span>
-          </h2>
-          
-          <p className="text-xl md:text-2xl text-white/60 max-w-3xl mx-auto leading-relaxed font-medium">
-            Bridging the gap between complex engineering and human-centric design with modern web technologies.
-          </p>
-
-          <div className="flex flex-wrap items-center justify-center gap-8 pt-12">
-            <button className="px-12 py-5 rounded-full bg-primary text-white font-bold hover:scale-105 transition-all shadow-[0_0_40px_rgba(59,130,246,0.4)] interactive text-lg">
-              Get Started
-            </button>
-            <button className="px-12 py-5 rounded-full glass border border-white/10 font-bold hover:bg-white/10 transition-all interactive text-lg">
-              View Showcase
-            </button>
+          <div className="space-y-4">
+            <p className="text-xs font-black tracking-[0.8em] uppercase text-white/40 mb-12">
+              Innovate . Design . Deliver
+            </p>
+            
+            <div className="flex justify-center">
+              <button className="px-10 py-4 rounded-full bg-white text-black font-bold uppercase tracking-widest text-xs hover:scale-105 transition-all shadow-2xl interactive">
+                Explore Portfolio
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -81,10 +67,9 @@ export default function Hero() {
       <motion.div
         animate={{ y: [0, 10, 0] }}
         transition={{ duration: 2, repeat: Infinity }}
-        className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3 opacity-40"
+        className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3 opacity-20"
       >
-        <span className="text-[10px] uppercase tracking-[0.4em] font-black">Initiate Discovery</span>
-        <ChevronDown size={24} className="text-primary" />
+        <ChevronDown size={24} className="text-white" />
       </motion.div>
     </section>
   );
