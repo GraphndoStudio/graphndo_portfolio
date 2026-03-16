@@ -1,3 +1,40 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-bg",
+      "description": "Abstract futuristic dark background",
+      "imageUrl": "https://picsum.photos/seed/cyber1/1920/1080",
+      "imageHint": "futuristic dark"
+    },
+    {
+      "id": "profile",
+      "description": "Professional profile placeholder",
+      "imageUrl": "https://picsum.photos/seed/sharukh/600/600",
+      "imageHint": "man professional"
+    },
+    {
+      "id": "lane-detection",
+      "description": "Lane Detection System UI",
+      "imageUrl": "https://picsum.photos/seed/lane/800/600",
+      "imageHint": "ai car"
+    },
+    {
+      "id": "pos-system",
+      "description": "Modern POS System Interface",
+      "imageUrl": "https://picsum.photos/seed/pos/800/600",
+      "imageHint": "dashboard ui"
+    },
+    {
+      "id": "social-design-1",
+      "description": "Social Media Graphic Design",
+      "imageUrl": "https://picsum.photos/seed/social1/400/500",
+      "imageHint": "graphic design"
+    },
+    {
+      "id": "social-design-2",
+      "description": "Social Media Graphic Design",
+      "imageUrl": "https://picsum.photos/seed/social2/400/500",
+      "imageHint": "marketing design"
+    }
+  ]
 }
