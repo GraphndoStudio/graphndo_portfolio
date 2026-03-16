@@ -14,7 +14,7 @@ export default function AdminLogin() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // Frontend only for now: mock successful login
+    // Static prototype logic: redirection to dashboard
     router.push("/admin/dashboard");
   };
 
