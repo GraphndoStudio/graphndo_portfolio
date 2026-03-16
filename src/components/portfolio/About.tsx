@@ -11,7 +11,7 @@ gsap.registerPlugin(ScrollTrigger);
 export default function About() {
   const containerRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLDivElement>(null);
-  const profileImg = PlaceHolderImages.find(img => img.id === 'profile')!;
+  const profileImg = PlaceHolderImages.find(img => img.id === 'profile');
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -46,7 +46,7 @@ export default function About() {
       });
 
       // Image Parallax on Scroll
-      if (window.innerWidth > 768) {
+      if (window.innerWidth > 768 && imgRef.current) {
         gsap.to(imgRef.current, {
           scrollTrigger: {
             trigger: containerRef.current,
@@ -63,20 +63,22 @@ export default function About() {
     return () => ctx.revert();
   }, []);
 
+  if (!profileImg) return null;
+
   return (
     <section id="about" ref={containerRef} className="py-24 md:py-40 relative">
       <div className="container mx-auto px-6 section-wrap">
         <div className="grid lg:grid-cols-2 gap-16 md:gap-24 items-center">
-          <div className="relative group max-w-md mx-auto lg:max-w-none">
-            <div ref={imgRef} className="relative aspect-[4/5] rounded-[2rem] overflow-hidden glass-card p-2 shadow-2xl">
-              <div className="relative w-full h-full rounded-[1.5rem] overflow-hidden">
+          <div className="relative group max-w-md mx-auto lg:max-w-none w-full">
+            <div ref={imgRef} className="relative aspect-[4/5] rounded-[2rem] overflow-hidden glass-card p-2 shadow-2xl bg-white/[0.02]">
+              <div className="relative w-full h-full rounded-[1.5rem] overflow-hidden bg-[#0a0a0c]">
                 <Image
                   src={profileImg.imageUrl}
                   alt="Sharukh H"
                   fill
                   priority
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover grayscale hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
+                  className="object-cover transition-all duration-1000 scale-105 group-hover:scale-100"
                   data-ai-hint={profileImg.imageHint}
                 />
               </div>
@@ -84,7 +86,7 @@ export default function About() {
           </div>
 
           <div className="space-y-8 md:space-y-12 text-center lg:text-left">
-            <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter leading-tight reveal-p">
+            <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter leading-tight reveal-p text-white">
               Clean Code Meets <br />
               <span className="gradient-text">Emotional Design.</span>
             </h2>
@@ -100,11 +102,11 @@ export default function About() {
 
             <div className="grid grid-cols-2 gap-8 md:gap-12 pt-6 reveal-p">
               <div className="space-y-1 border-l-2 border-primary/30 pl-6 md:pl-8 text-left">
-                <h4 className="text-4xl md:text-5xl font-bold tracking-tighter">2+</h4>
+                <h4 className="text-4xl md:text-5xl font-bold tracking-tighter text-white">2+</h4>
                 <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground">Years of Vision</p>
               </div>
               <div className="space-y-1 border-l-2 border-secondary/30 pl-6 md:pl-8 text-left">
-                <h4 className="text-4xl md:text-5xl font-bold tracking-tighter">50+</h4>
+                <h4 className="text-4xl md:text-5xl font-bold tracking-tighter text-white">50+</h4>
                 <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground">Digital Artifacts</p>
               </div>
             </div>

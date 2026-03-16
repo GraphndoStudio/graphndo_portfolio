@@ -103,7 +103,7 @@ export default function Projects() {
               className={`w-[calc(100vw-48px)] md:w-[560px] flex-shrink-0 transition-all duration-700 ${currentIndex === idx ? 'opacity-100' : 'opacity-20 scale-95'}`}
             >
               <div className="group relative glass-card p-6 md:p-8 overflow-hidden bg-white/[0.01]">
-                <div className="relative aspect-[16/10] rounded-2xl overflow-hidden mb-6 md:mb-8 shadow-xl">
+                <div className="relative aspect-[16/10] rounded-2xl overflow-hidden mb-6 md:mb-8 shadow-xl bg-[#0a0a0c]">
                   <Image
                     src={project.img || ''}
                     alt={project.title}
