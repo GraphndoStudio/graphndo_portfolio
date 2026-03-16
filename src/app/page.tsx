@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Lenis from "lenis";
 import Navbar from "@/components/portfolio/Navbar";
 import Hero from "@/components/portfolio/Hero";
@@ -14,13 +14,19 @@ import Contact from "@/components/portfolio/Contact";
 import Footer from "@/components/portfolio/Footer";
 import CustomCursor from "@/components/portfolio/CustomCursor";
 import LiquidBackground from "@/components/portfolio/LiquidBackground";
+import SplashScreen from "@/components/portfolio/SplashScreen";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { AnimatePresence } from "framer-motion";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
+    if (loading) return;
+
     // Fine-tuned Lenis for "Weighty" premium feel
     const lenis = new Lenis({
       duration: 1.5,
@@ -42,21 +48,31 @@ export default function Home() {
       lenis.destroy();
       gsap.ticker.remove(lenis.raf);
     };
-  }, []);
+  }, [loading]);
 
   return (
     <main className="relative bg-[#030305]">
-      <LiquidBackground />
-      <CustomCursor />
-      <Navbar />
-      <Hero />
-      <About />
-      <Skills />
-      <Projects />
-      <Timeline />
-      <CTA />
-      <Contact />
-      <Footer />
+      <AnimatePresence>
+        {loading && (
+          <SplashScreen onComplete={() => setLoading(false)} />
+        )}
+      </AnimatePresence>
+      
+      {!loading && (
+        <>
+          <LiquidBackground />
+          <CustomCursor />
+          <Navbar />
+          <Hero />
+          <About />
+          <Skills />
+          <Projects />
+          <Timeline />
+          <CTA />
+          <Contact />
+          <Footer />
+        </>
+      )}
     </main>
   );
 }
