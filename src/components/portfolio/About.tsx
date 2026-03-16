@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -61,6 +60,7 @@ export default function About() {
                   src={profileImg.imageUrl}
                   alt="Sharukh H"
                   fill
+                  priority
                   className="object-cover grayscale hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100"
                   data-ai-hint={profileImg.imageHint}
                 />
