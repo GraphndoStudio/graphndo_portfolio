@@ -67,6 +67,13 @@ export default function Hero() {
     return () => ctx.revert();
   }, []);
 
+  const scrollToProjects = () => {
+    const projectsSection = document.getElementById("projects");
+    if (projectsSection) {
+      projectsSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <section ref={containerRef} className="relative min-h-screen flex items-center justify-center overflow-hidden px-4">
       <div ref={contentRef} className="relative z-10 w-full max-w-7xl">
@@ -91,7 +98,10 @@ export default function Hero() {
             </div>
             
             <div className="flex justify-center pt-4 md:pt-8">
-              <button className="group relative px-8 md:px-12 py-4 md:py-5 rounded-full bg-white text-black font-bold uppercase tracking-widest text-[10px] md:text-xs hover:scale-105 transition-all shadow-xl interactive flex items-center gap-3">
+              <button 
+                onClick={scrollToProjects}
+                className="group relative px-8 md:px-12 py-4 md:py-5 rounded-full bg-white text-black font-bold uppercase tracking-widest text-[10px] md:text-xs hover:scale-105 transition-all shadow-xl interactive flex items-center gap-3"
+              >
                 Explore Portfolio
                 <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
               </button>
