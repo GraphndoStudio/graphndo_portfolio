@@ -13,11 +13,13 @@ import {
   Trash2,
   Image as ImageIcon,
   Code,
-  Briefcase
+  Briefcase,
+  Sparkles,
+  Link as LinkIcon
 } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import Link from "next/link";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("hero");
@@ -52,6 +54,16 @@ export default function AdminDashboard() {
               {item.label}
             </button>
           ))}
+          
+          <div className="pt-8 mt-8 border-t border-white/5">
+            <Link 
+              href="/admin/project-gen"
+              className="w-full flex items-center gap-4 px-6 py-4 rounded-xl text-sm font-bold text-primary hover:bg-primary/10 transition-all"
+            >
+              <Sparkles size={18} />
+              AI Description Gen
+            </Link>
+          </div>
         </nav>
 
         <button className="flex items-center gap-4 px-6 py-4 rounded-xl text-sm font-bold text-red-400 hover:bg-red-400/10 transition-all">
@@ -99,6 +111,15 @@ export default function AdminDashboard() {
                 <Input defaultValue="Clean Code Meets Emotional Design." className="bg-white/5 border-white/10 h-14 px-6 rounded-xl" />
               </div>
               <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-white/30">Profile Image URL</label>
+                <div className="flex gap-4">
+                  <div className="w-14 h-14 rounded-xl bg-white/5 flex items-center justify-center shrink-0 border border-white/10 overflow-hidden">
+                    <img src="https://picsum.photos/seed/sharukh/600/600" alt="Preview" className="w-full h-full object-cover" />
+                  </div>
+                  <Input defaultValue="https://picsum.photos/seed/sharukh/600/600" className="bg-white/5 border-white/10 h-14 px-6 rounded-xl" />
+                </div>
+              </div>
+              <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-white/30">Story Paragraph 1</label>
                 <Textarea rows={4} className="bg-white/5 border-white/10 p-6 rounded-xl resize-none" defaultValue="I am a creative architect specializing in frontend technologies..." />
               </div>
@@ -117,23 +138,30 @@ export default function AdminDashboard() {
 
           {activeTab === "projects" && (
             <div className="space-y-6">
-              {[1, 2, 3].map((i) => (
+              {[
+                { name: "Lane Detection AI", img: "https://picsum.photos/seed/lane/800/600", type: "Machine Learning" },
+                { name: "Enterprise POS", img: "https://picsum.photos/seed/pos/800/600", type: "Web Engine" },
+                { name: "Visual Branding", img: "https://picsum.photos/seed/social1/400/500", type: "Creative Design" }
+              ].map((project, i) => (
                 <div key={i} className="glass-card p-8 border-white/5 flex gap-8 items-start group">
-                  <div className="w-48 aspect-video bg-white/5 rounded-2xl flex items-center justify-center text-white/10 shrink-0">
-                    <ImageIcon size={40} />
+                  <div className="w-48 aspect-video bg-white/5 rounded-2xl border border-white/10 overflow-hidden shrink-0 group-hover:border-primary/50 transition-colors">
+                    <img src={project.img} alt={project.name} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" />
                   </div>
                   <div className="flex-1 space-y-4">
                     <div className="flex justify-between items-center">
-                      <Input defaultValue={`Project Name ${i}`} className="bg-transparent border-none p-0 text-xl font-bold h-auto w-auto focus-visible:ring-0" />
+                      <Input defaultValue={project.name} className="bg-transparent border-none p-0 text-xl font-bold h-auto w-auto focus-visible:ring-0" />
                       <button className="p-2 text-white/20 hover:text-red-400 transition-colors">
                         <Trash2 size={18} />
                       </button>
                     </div>
-                    <Input defaultValue="Web Application" className="bg-white/5 border-white/10 text-xs text-primary font-bold uppercase tracking-widest" />
+                    <div className="space-y-2">
+                      <label className="text-[8px] font-black uppercase tracking-widest text-white/20">Thumbnail URL</label>
+                      <Input defaultValue={project.img} className="bg-white/5 border-white/10 h-10 px-4 rounded-lg text-xs" />
+                    </div>
                     <div className="flex gap-2">
-                      <span className="px-3 py-1 bg-white/5 rounded-full text-[10px] font-bold">React</span>
-                      <span className="px-3 py-1 bg-white/5 rounded-full text-[10px] font-bold">GSAP</span>
-                      <button className="px-3 py-1 bg-primary/20 text-primary rounded-full text-[10px] font-bold flex items-center gap-1">
+                      <span className="px-3 py-1 bg-white/5 rounded-full text-[10px] font-bold border border-white/10">React</span>
+                      <span className="px-3 py-1 bg-white/5 rounded-full text-[10px] font-bold border border-white/10">GSAP</span>
+                      <button className="px-3 py-1 bg-primary/20 text-primary rounded-full text-[10px] font-bold flex items-center gap-1 border border-primary/20">
                         <Plus size={10} /> Add Tag
                       </button>
                     </div>
@@ -143,6 +171,42 @@ export default function AdminDashboard() {
               <button className="w-full py-8 border-2 border-dashed border-white/5 rounded-[2rem] text-white/20 font-bold flex items-center justify-center gap-3 hover:bg-white/[0.02] hover:border-white/10 transition-all">
                 <Plus size={20} /> Add New Project
               </button>
+            </div>
+          )}
+
+          {activeTab === "settings" && (
+            <div className="glass-card p-10 space-y-8 border-white/5">
+              <div className="space-y-4">
+                <h3 className="text-sm font-bold uppercase tracking-widest text-primary">Contact Configuration</h3>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-white/30">Email Address</label>
+                    <Input defaultValue="hello@sharukh.design" className="bg-white/5 border-white/10 h-12 px-6 rounded-xl" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-white/30">Phone Number</label>
+                    <Input defaultValue="+91 98765 43210" className="bg-white/5 border-white/10 h-12 px-6 rounded-xl" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-sm font-bold uppercase tracking-widest text-primary">Social Connections</h3>
+                <div className="space-y-4">
+                  {[
+                    { label: "LinkedIn", icon: LinkIcon, url: "linkedin.com/in/sharukh" },
+                    { label: "GitHub", icon: LinkIcon, url: "github.com/sharukh" },
+                    { label: "Instagram", icon: LinkIcon, url: "instagram.com/sharukh.design" }
+                  ].map((social) => (
+                    <div key={social.label} className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center border border-white/10">
+                        <social.icon size={16} className="text-white/40" />
+                      </div>
+                      <Input defaultValue={social.url} className="bg-white/5 border-white/10 h-12 px-6 rounded-xl flex-1" />
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
         </div>
