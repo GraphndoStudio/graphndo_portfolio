@@ -36,7 +36,8 @@ const itemVariants = {
   },
 };
 
-export default function Skills() {
+export default function Skills({ data }: { data?: any[] }) {
+  const displaySkills = data || SKILLS;
   return (
     <section id="skills" className="py-40 relative">
       <div className="container mx-auto px-6">
@@ -67,7 +68,7 @@ export default function Skills() {
           viewport={{ once: true, margin: "-50px" }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
         >
-          {SKILLS.map((skill) => (
+          {displaySkills.map((skill) => (
             <motion.div
               key={skill.name}
               variants={itemVariants}
@@ -75,12 +76,12 @@ export default function Skills() {
               className="skill-card glass-card p-10 group relative overflow-hidden bg-white/[0.02]"
             >
               <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-20 transition-all duration-700">
-                <skill.icon size={100} style={{ color: skill.color }} />
+                {skill.icon && <skill.icon size={100} style={{ color: skill.color }} />}
               </div>
               
               <div className="relative z-10">
                 <div className="w-16 h-16 rounded-2xl glass border border-white/10 flex items-center justify-center mb-8 group-hover:scale-110 transition-transform shadow-lg">
-                  <skill.icon size={32} style={{ color: skill.color }} />
+                  {skill.icon && <skill.icon size={32} style={{ color: skill.color }} />}
                 </div>
                 <h3 className="text-2xl font-bold mb-6 text-white group-hover:text-primary transition-colors">{skill.name}</h3>
                 
@@ -106,6 +107,7 @@ export default function Skills() {
             </motion.div>
           ))}
         </motion.div>
+
       </div>
     </section>
   );

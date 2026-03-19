@@ -11,7 +11,11 @@ const PLATFORMS = [
   { name: "Twitter", icon: MessageSquare, url: "#", color: "#1da1f2", label: "Live Feed" },
 ];
 
-export default function Platforms() {
+export default function Platforms({ data }: { data?: any }) {
+  const displayPlatforms = PLATFORMS.map(p => ({
+    ...p,
+    url: data?.[p.name.toLowerCase()] || p.url
+  }));
   return (
     <section className="py-24 relative">
       <div className="container mx-auto px-6">
@@ -23,7 +27,7 @@ export default function Platforms() {
           </h2>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-            {PLATFORMS.map((platform) => (
+            {displayPlatforms.map((platform) => (
               <motion.a
                 key={platform.name}
                 href={platform.url}

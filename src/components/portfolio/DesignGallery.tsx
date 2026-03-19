@@ -16,8 +16,9 @@ const DESIGN_WORKS = [
   { id: 6, title: "Flow Animation Frame", type: "Animation", img: "lane-detection", span: "row-span-2" },
 ];
 
-export default function DesignGallery() {
+export default function DesignGallery({ data }: { data?: any[] }) {
   const [selectedImg, setSelectedImg] = useState<string | null>(null);
+  const displayWorks = data || DESIGN_WORKS;
 
   return (
     <section id="gallery" className="py-32 relative">
@@ -32,8 +33,10 @@ export default function DesignGallery() {
         </header>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[200px]">
-          {DESIGN_WORKS.map((work) => {
+          {displayWorks.map((work) => {
             const imgData = PlaceHolderImages.find(i => i.id === work.img);
+            const displayImg = work.img?.startsWith('http') ? work.img : imgData?.imageUrl;
+
             return (
               <motion.div
                 key={work.id}
@@ -42,11 +45,11 @@ export default function DesignGallery() {
                 viewport={{ once: true }}
                 whileHover={{ y: -5 }}
                 className={`${work.span} relative group rounded-[2rem] overflow-hidden glass-card p-1 cursor-pointer`}
-                onClick={() => setSelectedImg(imgData?.imageUrl || null)}
+                onClick={() => setSelectedImg(displayImg || null)}
               >
                 <div className="relative w-full h-full rounded-[1.8rem] overflow-hidden bg-[#0a0a0c]">
                   <Image
-                    src={imgData?.imageUrl || ""}
+                    src={displayImg || ""}
                     alt={work.title}
                     fill
                     sizes="(max-width: 768px) 100vw, 33vw"

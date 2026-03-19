@@ -37,13 +37,15 @@ const PROJECTS = [
   }
 ];
 
-export default function Projects() {
+export default function Projects({ data }: { data?: any[] }) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  const displayProjects = data || PROJECTS;
+
   const slide = (direction: 'next' | 'prev') => {
     let newIndex = currentIndex;
-    if (direction === 'next' && currentIndex < PROJECTS.length - 1) {
+    if (direction === 'next' && currentIndex < displayProjects.length - 1) {
       newIndex++;
     } else if (direction === 'prev' && currentIndex > 0) {
       newIndex--;
@@ -87,7 +89,7 @@ export default function Projects() {
           </button>
           <button
             onClick={() => slide('next')}
-            disabled={currentIndex === PROJECTS.length - 1}
+            disabled={currentIndex === displayProjects.length - 1}
             className="w-12 h-12 md:w-16 md:h-16 rounded-full glass border border-white/10 flex items-center justify-center hover:bg-primary transition-all disabled:opacity-10 interactive"
           >
             <ChevronRight size={24} />
@@ -97,7 +99,7 @@ export default function Projects() {
       
       <div className="px-6 md:px-[10vw]">
         <div ref={scrollContainerRef} className="flex gap-4 md:gap-10 items-center">
-          {PROJECTS.map((project, idx) => (
+          {displayProjects.map((project, idx) => (
             <div 
               key={project.id} 
               className={`w-[calc(100vw-48px)] md:w-[560px] flex-shrink-0 transition-all duration-700 ${currentIndex === idx ? 'opacity-100' : 'opacity-20 scale-95'}`}
@@ -124,15 +126,16 @@ export default function Projects() {
 
                 <div className="space-y-4">
                   <span className="text-primary font-black text-[9px] tracking-[0.4em] uppercase opacity-80">{project.type}</span>
-                  <h3 className="text-2xl md:text-4xl font-bold tracking-tight text-white">{project.title}</h3>
+                  <h3 className="text-2xl md:text-4xl font-bold tracking-tight text-white">{project.title || project.name}</h3>
                   <div className="flex flex-wrap gap-2">
-                    {project.tags.map(tag => (
+                    {project.tags && project.tags.map((tag: string) => (
                       <span key={tag} className="px-4 py-1.5 bg-white/5 rounded-full text-[10px] font-bold border border-white/10 text-white/50">
                         {tag}
                       </span>
                     ))}
                   </div>
                 </div>
+
               </div>
             </div>
           ))}
@@ -149,11 +152,11 @@ export default function Projects() {
         <div className="h-[2px] flex-1 bg-white/5 rounded-full overflow-hidden">
           <div 
             className="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-700 ease-in-out"
-            style={{ width: `${((currentIndex + 1) / PROJECTS.length) * 100}%` }}
+            style={{ width: `${((currentIndex + 1) / displayProjects.length) * 100}%` }}
           />
         </div>
         <span className="text-[10px] font-black font-mono tracking-tighter opacity-30 text-white">
-          0{currentIndex + 1} / 0{PROJECTS.length}
+          0{currentIndex + 1} / 0{displayProjects.length}
         </span>
       </div>
     </section>

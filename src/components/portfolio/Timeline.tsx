@@ -13,9 +13,11 @@ const STEPS = [
   { year: "2026", title: "Creative Agency", desc: "Currently architecting modern web experiences for a visionary roster of clients." },
 ];
 
-export default function Timeline() {
+export default function Timeline({ data }: { data?: any[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
+
+  const displaySteps = data || STEPS;
 
   useEffect(() => {
     if (!containerRef.current || !lineRef.current) return;
@@ -109,7 +111,7 @@ export default function Timeline() {
           />
 
           <div className="space-y-40 md:space-y-80">
-            {STEPS.map((step, idx) => (
+            {displaySteps.map((step, idx) => (
               <div key={step.year} className="timeline-item relative group pl-16 md:pl-0">
                 <span className={`editorial-year transition-all duration-1000 group-hover:text-primary/10 hidden md:block ${idx % 2 === 0 ? '-left-12' : '-right-12'}`}>
                   {step.year}

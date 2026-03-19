@@ -5,17 +5,20 @@ import { ChevronDown, ArrowRight } from "lucide-react";
 import { useRef, useEffect } from "react";
 import gsap from "gsap";
 
-export default function Hero() {
+export default function Hero({ data }: { data?: any }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const nameRef = useRef<HTMLHeadingElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
+  const displayName = data?.displayName || "SHARUKH H";
+  const displayYear = data?.year || "2024";
+  const displayTagline = data?.tagline || "Creative Developer • UI Architect";
+
   useEffect(() => {
     if (!containerRef.current || !nameRef.current) return;
     
-    const nameText = "SHARUKH H";
     // Inject spans for character animation
-    nameRef.current.innerHTML = nameText.split("").map(char => 
+    nameRef.current.innerHTML = displayName.split("").map((char: string) => 
       `<span class="char-mask"><span class="char-inner" style="display:inline-block">${char === " " ? "&nbsp;" : char}</span></span>`
     ).join("");
 
@@ -65,7 +68,7 @@ export default function Hero() {
     }, containerRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [displayName]);
 
   const scrollToProjects = () => {
     const projectsSection = document.getElementById("projects");
@@ -80,18 +83,18 @@ export default function Hero() {
         <div className="text-center space-y-8 md:space-y-12">
           <div className="hero-content-stagger">
             <span className="text-[10px] md:text-xs font-black tracking-[0.6em] md:tracking-[1em] uppercase text-primary/80 mb-4 md:mb-6 block">
-              EST. 2024 / NILGIRIS
+              EST. {displayYear} / NILGIRIS
             </span>
           </div>
 
           <h1 ref={nameRef} className="text-[12vw] md:text-[10vw] font-bold tracking-tighter leading-[0.9] mb-6 md:mb-8 text-white uppercase select-none">
-            SHARUKH H
+            {displayName}
           </h1>
           
           <div className="space-y-6 md:space-y-10 hero-content-stagger">
             <div className="flex flex-col items-center gap-2 md:gap-4">
-              <p className="text-[10px] md:text-base font-medium tracking-[0.3em] md:tracking-[0.4em] uppercase text-white/40">
-                Creative Developer <span className="text-primary mx-2">•</span> UI Architect
+              <p className="text-[10px] md:text-base font-medium tracking-[0.3em] md:tracking-[0.4em] uppercase text-white/40 text-center">
+                {displayTagline}
               </p>
               
               <div className="h-[1px] w-16 md:w-24 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
@@ -115,7 +118,7 @@ export default function Hero() {
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-center pointer-events-none"
       >
-        <span className="text-[30vw] font-black leading-none text-white select-none">2024</span>
+        <span className="text-[30vw] font-black leading-none text-white select-none">{displayYear}</span>
       </motion.div>
 
       <motion.div

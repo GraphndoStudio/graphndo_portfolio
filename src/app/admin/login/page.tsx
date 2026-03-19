@@ -3,19 +3,30 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Shield, Lock, User, ArrowRight } from "lucide-react";
+import { Shield, Lock, User, ArrowRight, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { auth } from "@/lib/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import LiquidBackground from "@/components/portfolio/LiquidBackground";
 
 export default function AdminLogin() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Static prototype logic: redirection to dashboard
-    router.push("/admin/dashboard");
+    setLoading(true);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      router.push("/admin/dashboard");
+    } catch (err: any) {
+      setError(err.message || "Invalid credentials");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -65,13 +76,22 @@ export default function AdminLogin() {
               </div>
             </div>
 
+            {error && (
+              <p className="text-red-400 text-xs font-bold text-center uppercase tracking-widest">{error}</p>
+            )}
+
             <button
-              type="submit"
-              className="w-full py-5 rounded-xl bg-primary text-white font-bold flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-primary/20 interactive group"
-            >
-              Verify Credentials
-              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-            </button>
+               type="submit"
+               disabled={loading}
+               className="w-full py-5 rounded-xl bg-primary text-white font-bold flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-primary/20 interactive group disabled:opacity-50"
+             >
+               {loading ? <Loader2 className="animate-spin" size={18} /> : (
+                 <>
+                   Verify Credentials
+                   <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                 </>
+               )}
+             </button>
           </form>
 
           <div className="text-center">

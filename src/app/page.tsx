@@ -21,14 +21,16 @@ import SplashScreen from "@/components/portfolio/SplashScreen";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { AnimatePresence } from "framer-motion";
+import { usePortfolioData } from "@/lib/usePortfolioData";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
+  const { data, loading: dataLoading } = usePortfolioData();
 
   useEffect(() => {
-    if (loading) return;
+    if (loading || dataLoading) return;
 
     // Fine-tuned Lenis for "Weighty" premium feel
     const lenis = new Lenis({
@@ -51,34 +53,43 @@ export default function Home() {
       lenis.destroy();
       gsap.ticker.remove(lenis.raf);
     };
-  }, [loading]);
+  }, [loading, dataLoading]);
+
+  // Determine visibility
+  const isVisible = (section: string) => {
+    if (!data) return true; // Default to visible if data hasn't loaded (fallback)
+    return data.visibility?.[section] !== false;
+  };
 
   return (
     <main className="relative bg-[#030305]">
       <AnimatePresence>
-        {loading && (
+        {(loading || dataLoading) && (
           <SplashScreen onComplete={() => setLoading(false)} />
         )}
       </AnimatePresence>
       
-      {!loading && (
+      {!loading && !dataLoading && (
         <>
           <LiquidBackground />
           <CustomCursor />
           <Navbar />
-          <Hero />
-          <About />
-          <Skills />
-          <Projects />
-          <DesignGallery />
-          <Timeline />
-          <Certificates />
-          <Platforms />
-          <CTA />
-          <Contact />
-          <Footer />
+          
+          {isVisible('hero') && <Hero data={data?.hero} />}
+          {isVisible('about') && <About data={data?.about} />}
+          {isVisible('skills') && <Skills data={data?.skills} />}
+          {isVisible('projects') && <Projects data={data?.projects} />}
+          {isVisible('gallery') && <DesignGallery data={data?.gallery} />}
+          {isVisible('journey') && <Timeline data={data?.journey} />}
+          {isVisible('credentials') && <Certificates data={data?.credentials} />}
+          {isVisible('platforms') && <Platforms data={data?.platforms} />}
+          
+          {isVisible('cta') && <CTA />}
+          {isVisible('contact') && <Contact />}
+          {isVisible('footer') && <Footer />}
         </>
       )}
     </main>
   );
 }
+

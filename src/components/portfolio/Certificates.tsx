@@ -27,7 +27,8 @@ const CERTS = [
   }
 ];
 
-export default function Certificates() {
+export default function Certificates({ data }: { data?: any[] }) {
+  const displayCerts = data || CERTS;
   return (
     <section id="credentials" className="py-32 relative overflow-hidden">
       <div className="container mx-auto px-6">
@@ -39,8 +40,10 @@ export default function Certificates() {
         </header>
 
         <div className="grid md:grid-cols-3 gap-10">
-          {CERTS.map((cert, i) => {
+          {displayCerts.map((cert, i) => {
             const imgData = PlaceHolderImages.find(img => img.id === cert.img);
+            const displayImg = cert.img?.startsWith('http') ? cert.img : imgData?.imageUrl;
+
             return (
               <div key={i} className="perspective-1000 group h-[400px]">
                 <motion.div 
@@ -51,7 +54,7 @@ export default function Certificates() {
                     <div className="w-full h-full glass-card p-1 overflow-hidden">
                       <div className="relative w-full h-full rounded-[1.8rem] overflow-hidden flex flex-col justify-end p-8 bg-[#0a0a0c]">
                         <Image
-                          src={imgData?.imageUrl || ""}
+                          src={displayImg || ""}
                           alt={cert.title}
                           fill
                           sizes="400px"
@@ -72,7 +75,7 @@ export default function Certificates() {
                       <div className="relative w-full h-full rounded-[1.8rem] overflow-hidden bg-primary/5 flex flex-col items-center justify-center text-center p-8">
                          <div className="w-full h-48 relative rounded-xl overflow-hidden mb-8 border border-white/5">
                             <Image
-                              src={imgData?.imageUrl || ""}
+                              src={displayImg || ""}
                               alt="Full Certificate"
                               fill
                               className="object-cover"

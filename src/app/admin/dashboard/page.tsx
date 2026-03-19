@@ -1,8 +1,13 @@
 
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { auth } from "@/lib/firebase";
+import { signOut } from "firebase/auth";
+import { useRouter } from "next/navigation";
+import { getPortfolioData, savePortfolioData } from "@/lib/db-service";
+import { useToast } from "@/hooks/use-toast";
 import { 
   LayoutDashboard, 
   Settings, 
@@ -25,7 +30,8 @@ import {
   Eye,
   EyeOff,
   Upload,
-  X
+  X,
+  Loader2
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -45,21 +51,90 @@ const TABS = [
 ];
 
 export default function AdminDashboard() {
+  const router = useRouter();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("hero");
+  const [saving, setSaving] = useState(false);
   
-  // Local state for visibility toggles
-  const [visibility, setVisibility] = useState({
-    hero: true,
-    about: true,
-    skills: true,
-    projects: true,
-    gallery: true,
-    journey: true,
-    credentials: true,
-    platforms: true,
-    cta: true,
-    contact: true
+  // Real dynamic data state
+  const [data, setData] = useState({
+    hero: {
+      displayName: "SHARUKH H",
+      year: "2024",
+      tagline: "Creative Developer • UI Architect",
+      img: "https://picsum.photos/seed/cyber1/1920/1080"
+    },
+    about: {
+      headline: "Clean Code Meets Emotional Design.",
+      profileImg: "https://picsum.photos/seed/sharukh/600/600",
+      description: "I am a creative architect specializing in frontend technologies...",
+      experience: "2+",
+      projectsCount: "50+"
+    },
+    projects: [
+      { id: "p1", name: "Lane Detection AI", img: "https://picsum.photos/seed/lane/800/600", type: "Machine Learning", tags: ["Python", "OpenCV"] },
+      { id: "p2", name: "Enterprise POS", img: "https://picsum.photos/seed/pos/800/600", type: "Web Engine", tags: ["Next.js", "Firebase"] }
+    ],
+    journey: [
+      { year: "2023", title: "Visual Genesis", desc: "Mastering the physics of pixels..." },
+      { year: "2024", title: "Logic Architecture", desc: "Developing deep structural understanding..." }
+    ],
+    platforms: {
+      fiverr: "fiverr.com/sharukh",
+      linkedin: "linkedin.com/in/sharukh",
+      instagram: "instagram.com/sharukh",
+      twitter: "twitter.com/sharukh"
+    },
+    visibility: {
+      hero: true,
+      about: true,
+      skills: true,
+      projects: true,
+      gallery: true,
+      journey: true,
+      credentials: true,
+      platforms: true,
+      cta: true,
+      contact: true
+    }
   });
+
+  useEffect(() => {
+    const fetch = async () => {
+      const saved = await getPortfolioData();
+      if (saved) {
+        setData(prev => ({ ...prev, ...saved }));
+      }
+    };
+    fetch();
+  }, []);
+
+  const handleSync = async () => {
+    setSaving(true);
+    try {
+      await savePortfolioData(data);
+      toast({ title: "Synchronized", description: "Changes pushed to global cloud." });
+    } catch (err) {
+      toast({ title: "Sync Failed", description: "Protocol interrupted. Check connection.", variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    router.push("/admin/login");
+  };
+
+  const toggleVisibility = (section: keyof typeof data.visibility) => {
+    setData(prev => ({ 
+      ...prev, 
+      visibility: { 
+        ...prev.visibility, 
+        [section]: !prev.visibility[section] 
+      } 
+    }));
+  };
 
   // Local state for image previews
   const [previews, setPreviews] = useState<Record<string, string>>({
@@ -79,10 +154,6 @@ export default function AdminDashboard() {
 
   const triggerUpload = (id: string) => {
     fileInputRefs.current[id]?.click();
-  };
-
-  const toggleVisibility = (section: keyof typeof visibility) => {
-    setVisibility(prev => ({ ...prev, [section]: !prev[section] }));
   };
 
   const ImageControl = ({ id, label, currentUrl }: { id: string, label: string, currentUrl: string }) => (
@@ -180,7 +251,10 @@ export default function AdminDashboard() {
           </div>
         </nav>
 
-        <button className="flex items-center gap-3 px-5 py-3 rounded-xl text-[11px] font-black uppercase tracking-wider text-red-400/60 hover:text-red-400 hover:bg-red-400/10 transition-all mt-auto group">
+        <button 
+          onClick={handleLogout}
+          className="flex items-center gap-3 px-5 py-3 rounded-xl text-[11px] font-black uppercase tracking-wider text-red-400/60 hover:text-red-400 hover:bg-red-400/10 transition-all mt-auto group"
+        >
           <LogOut size={16} className="group-hover:-translate-x-1 transition-transform" />
           Terminate
         </button>
@@ -203,9 +277,13 @@ export default function AdminDashboard() {
               <ExternalLink size={12} />
               Live Site
             </Link>
-            <button className="px-6 py-2.5 bg-primary text-white rounded-full font-black text-[9px] uppercase tracking-widest flex items-center gap-2 hover:scale-105 transition-all shadow-xl shadow-primary/20 active:scale-95">
-              <Save size={14} />
-              Sync Changes
+            <button 
+              onClick={handleSync}
+              disabled={saving}
+              className="px-6 py-2.5 bg-primary text-white rounded-full font-black text-[9px] uppercase tracking-widest flex items-center gap-2 hover:scale-105 transition-all shadow-xl shadow-primary/20 active:scale-95 disabled:opacity-50"
+            >
+              {saving ? <Loader2 className="animate-spin" size={14} /> : <Save size={14} />}
+              {saving ? "Syncing..." : "Sync Changes"}
             </button>
           </div>
         </header>
@@ -223,8 +301,8 @@ export default function AdminDashboard() {
             {activeTab !== "settings" && (
               <div className="mb-8 flex items-center justify-between p-6 glass-card border-primary/20 bg-primary/5">
                 <div className="flex items-center gap-4">
-                  <div className={cn("p-2 rounded-lg", visibility[activeTab as keyof typeof visibility] ? "bg-primary/20 text-primary" : "bg-white/5 text-white/20")}>
-                    {visibility[activeTab as keyof typeof visibility] ? <Eye size={18} /> : <EyeOff size={18} />}
+                  <div className={cn("p-2 rounded-lg", data.visibility[activeTab as keyof typeof data.visibility] ? "bg-primary/20 text-primary" : "bg-white/5 text-white/20")}>
+                    {data.visibility[activeTab as keyof typeof data.visibility] ? <Eye size={18} /> : <EyeOff size={18} />}
                   </div>
                   <div>
                     <h4 className="text-xs font-black uppercase tracking-widest">Module Status</h4>
@@ -233,11 +311,11 @@ export default function AdminDashboard() {
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="text-[10px] font-black uppercase tracking-widest text-white/20">
-                    {visibility[activeTab as keyof typeof visibility] ? "Active" : "Hidden"}
+                    {data.visibility[activeTab as keyof typeof data.visibility] ? "Active" : "Hidden"}
                   </span>
                   <Switch 
-                    checked={visibility[activeTab as keyof typeof visibility]} 
-                    onCheckedChange={() => toggleVisibility(activeTab as keyof typeof visibility)}
+                    checked={data.visibility[activeTab as keyof typeof data.visibility] as boolean} 
+                    onCheckedChange={() => toggleVisibility(activeTab as keyof typeof data.visibility)}
                   />
                 </div>
               </div>
@@ -248,18 +326,30 @@ export default function AdminDashboard() {
                 <div className="grid grid-cols-2 gap-8">
                   <div className="space-y-2">
                     <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">Display Name</label>
-                    <Input defaultValue="SHARUKH H" className="bg-white/5 border-white/10 h-12 px-5 rounded-xl focus:border-primary/50 text-lg font-bold" />
+                    <Input 
+                      value={data.hero.displayName} 
+                      onChange={(e) => setData(p => ({ ...p, hero: { ...p.hero, displayName: e.target.value } }))}
+                      className="bg-white/5 border-white/10 h-12 px-5 rounded-xl focus:border-primary/50 text-lg font-bold" 
+                    />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">Anchor Year</label>
-                    <Input defaultValue="2024" className="bg-white/5 border-white/10 h-12 px-5 rounded-xl focus:border-primary/50" />
+                    <Input 
+                      value={data.hero.year} 
+                      onChange={(e) => setData(p => ({ ...p, hero: { ...p.hero, year: e.target.value } }))}
+                      className="bg-white/5 border-white/10 h-12 px-5 rounded-xl focus:border-primary/50" 
+                    />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">Tagline Roles</label>
-                  <Input defaultValue="Creative Developer • UI Architect" className="bg-white/5 border-white/10 h-12 px-5 rounded-xl focus:border-primary/50" />
+                  <Input 
+                    value={data.hero.tagline} 
+                    onChange={(e) => setData(p => ({ ...p, hero: { ...p.hero, tagline: e.target.value } }))}
+                    className="bg-white/5 border-white/10 h-12 px-5 rounded-xl focus:border-primary/50" 
+                  />
                 </div>
-                <ImageControl id="hero" label="Hero Backdrop Node" currentUrl="https://picsum.photos/seed/cyber1/1920/1080" />
+                <ImageControl id="hero" label="Hero Backdrop Node" currentUrl={data.hero.img} />
               </div>
             )}
 
@@ -267,21 +357,38 @@ export default function AdminDashboard() {
               <div className="glass-card p-10 space-y-10 border-white/5">
                 <div className="space-y-2">
                   <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">Narrative Headline</label>
-                  <Input defaultValue="Clean Code Meets Emotional Design." className="bg-white/5 border-white/10 h-14 px-6 rounded-xl focus:border-primary/50 text-xl font-bold tracking-tight" />
+                  <Input 
+                    value={data.about.headline} 
+                    onChange={(e) => setData(p => ({ ...p, about: { ...p.about, headline: e.target.value } }))}
+                    className="bg-white/5 border-white/10 h-14 px-6 rounded-xl focus:border-primary/50 text-xl font-bold tracking-tight" 
+                  />
                 </div>
-                <ImageControl id="profile" label="Identity Artifact (Profile Image)" currentUrl="https://picsum.photos/seed/sharukh/600/600" />
+                <ImageControl id="profile" label="Identity Artifact (Profile Image)" currentUrl={data.about.profileImg} />
                 <div className="space-y-2">
                   <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">The Origin Story</label>
-                  <Textarea rows={6} className="bg-white/5 border-white/10 p-6 rounded-2xl resize-none leading-relaxed text-white/60 text-sm" defaultValue="I am a creative architect specializing in frontend technologies..." />
+                  <Textarea 
+                    rows={6} 
+                    className="bg-white/5 border-white/10 p-6 rounded-2xl resize-none leading-relaxed text-white/60 text-sm" 
+                    value={data.about.description} 
+                    onChange={(e) => setData(p => ({ ...p, about: { ...p.about, description: e.target.value } }))}
+                  />
                 </div>
                 <div className="grid grid-cols-2 gap-8">
                   <div className="space-y-2">
                     <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">Experience Metric</label>
-                    <Input defaultValue="2+" className="bg-white/5 border-white/10 h-12 px-5 rounded-xl focus:border-primary/50" />
+                    <Input 
+                      value={data.about.experience} 
+                      onChange={(e) => setData(p => ({ ...p, about: { ...p.about, experience: e.target.value } }))}
+                      className="bg-white/5 border-white/10 h-12 px-5 rounded-xl focus:border-primary/50" 
+                    />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">Artifact Metric (Projects)</label>
-                    <Input defaultValue="50+" className="bg-white/5 border-white/10 h-12 px-5 rounded-xl focus:border-primary/50" />
+                    <Input 
+                      value={data.about.projectsCount} 
+                      onChange={(e) => setData(p => ({ ...p, about: { ...p.about, projectsCount: e.target.value } }))}
+                      className="bg-white/5 border-white/10 h-12 px-5 rounded-xl focus:border-primary/50" 
+                    />
                   </div>
                 </div>
               </div>
@@ -301,11 +408,19 @@ export default function AdminDashboard() {
                       </button>
                     </div>
                     <ImageControl id={`project-${project.id}`} label="Project Artifact Asset" currentUrl={project.img} />
-                    <div className="grid grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">Category</label>
-                        <Input defaultValue={project.type} className="bg-white/5 border-white/10 h-12 px-5 rounded-xl" />
-                      </div>
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">Category</label>
+                      <Input 
+                        value={project.type} 
+                        onChange={(e) => {
+                          const newProjects = [...data.projects];
+                          newProjects[data.projects.findIndex(p => p.id === project.id)].type = e.target.value;
+                          setData(p => ({ ...p, projects: newProjects }));
+                        }}
+                        className="bg-white/5 border-white/10 h-12 px-5 rounded-xl" 
+                      />
+                    </div>
                       <div className="space-y-2">
                         <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">Core Tags</label>
                         <div className="flex flex-wrap gap-2">
@@ -397,15 +512,15 @@ export default function AdminDashboard() {
                     <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Module Visibility Protocols</h3>
                   </div>
                   <div className="grid grid-cols-2 gap-x-12 gap-y-6">
-                    {Object.entries(visibility).map(([module, isVisible]) => (
+                    {Object.entries(data.visibility).map(([module, isVisible]) => (
                       <div key={module} className="flex items-center justify-between py-2 border-b border-white/5">
                         <div className="flex items-center gap-3">
                           <div className={cn("w-2 h-2 rounded-full", isVisible ? "bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]" : "bg-white/10")} />
                           <span className="text-[10px] font-black uppercase tracking-widest text-white/60">{module} module</span>
                         </div>
                         <Switch 
-                          checked={isVisible} 
-                          onCheckedChange={() => toggleVisibility(module as keyof typeof visibility)} 
+                          checked={isVisible as boolean} 
+                          onCheckedChange={() => toggleVisibility(module as keyof typeof data.visibility)} 
                         />
                       </div>
                     ))}
